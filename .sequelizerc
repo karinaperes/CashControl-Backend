@@ -1,0 +1,7 @@
+const { resolve } = require("path") // Importa a função resolve do módulo path
+module.exports = { // Exporta o objeto que contém as configurações dos caminhos relativos, utilizando a função resolve, importada do path
+	"config": resolve(__dirname, "src", "config", "database.config.js"), // Define a chave 'config', o caminho do arquivo ./src/config/database.config.js
+	"models-path": resolve(__dirname, "src", "models"), // Define a chave 'models-path', o caminho da pasta ./src/models
+	"migrations-path": resolve(__dirname, "src", "database", "migrations"), // Define a chave 'migrations-path', o caminho da pasta ./src/database/migrations
+	"seeders-path": resolve(__dirname, "src", "database", "seeders") // Define a chave 'seeders-path', o caminho da pasta .src/database/seeders
+}
