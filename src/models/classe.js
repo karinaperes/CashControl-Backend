@@ -12,7 +12,9 @@ const Classe = connection.define('classe', {
         references: {
             model: 'TipoMov',
             key: 'id'
-        }        
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
     }
 })
 
