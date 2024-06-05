@@ -6,4 +6,5 @@ const TipoMov = connection.define('tipo_mov', {
         allowNull: false
 	}
 })
+
 module.exports = TipoMov
