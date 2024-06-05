@@ -3,17 +3,17 @@ const {connection} = require("../database/connections")
 const {hash} = require('bcrypt')
 
 const Usuario = connection.define('usuarios', {
-    nome:{
-        allowNull: false,
-        type: DataTypes.STRING
-    }, 
+	nome: {
+		type: DataTypes.STRING,
+        allowNull: false
+	},
     email: {
-        allowNull: false,
-        type: DataTypes.STRING
-    }, 
+        type: DataTypes.STRING,
+        allowNull: false        
+    },
     password: {
-        allowNull: false,
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false
     }
 })
 
