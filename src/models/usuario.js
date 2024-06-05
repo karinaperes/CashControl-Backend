@@ -1,5 +1,6 @@
-const { DataTypes } = require("sequelize") // Importando o componente DataTypes do Sequelize
-const { connection } = require("../database/connections")
+const {DataTypes} = require("sequelize")
+const {connection} = require("../database/connections")
+const {hash} = require('bcrypt')
 
 const Usuario = connection.define('usuarios', {
 	nome: {
@@ -10,10 +11,15 @@ const Usuario = connection.define('usuarios', {
         type: DataTypes.STRING,
         allowNull: false        
     },
-    senha: {
+    password: {
         type: DataTypes.STRING,
         allowNull: false
     }
+})
+
+Usuario.beforeSave(async (user) => {
+    user.password = await hash(user.password, 8)
+    return user
 })
 
 module.exports = Usuario
