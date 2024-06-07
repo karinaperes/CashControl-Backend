@@ -16,5 +16,6 @@ const Classe = connection.define('classes', {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
     }
+})
 
 module.exports = Classe
