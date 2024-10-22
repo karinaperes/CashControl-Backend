@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize") // Importando o componente DataTypes 
 const { connection } = require("../database/connections")
 
 const Classe = connection.define('classes', {
-	classe: {
+	nome_classe: {
 		type: DataTypes.STRING,
         allowNull: false
 	},
