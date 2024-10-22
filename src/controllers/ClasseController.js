@@ -3,9 +3,9 @@ const Classe = require('../models/Classe')
 class ClasseController {
     async cadastrar(req, res) {
         try {
-            const { nome_classe, tipo_mov_ID } = req.body
+            const { nome_classe, tipo_mov_id } = req.body
 
-            if (!nome_classe || tipo_mov_ID) {
+            if (!(nome_classe || tipo_mov_id)) {
                 return res.status(400).json({ erro: 'Todos os campos devem ser preenchidos!'})
             }
 
@@ -31,25 +31,50 @@ class ClasseController {
 
     async listar(req, res) {
         try {
+            const classes = await Classe.findAll()
+            res.status(200).json(classes)
+        } catch (error) {
+            res.status(500).json({ erro: 'Não foi possível listar as classes.'})
+        }
+    }
+
+    async listarUm(req, res) {
+        try {
+            const { id } = req.params
+            const classe = await Classe.findByPk(id)
+
+            res.status(200).json(classe)
             
         } catch (error) {
-            
+            console.log(error.message)
+            res.status(500).json({ erro: 'Não foi possível listar a classe'})
         }
     }
 
     async atualizar(req, res) {
         try {
+            const { id } = req.params
+            const classe = await Classe.findByPk(id)
+
+            await classe.update(req.body)
+            await classe.save()
+            res.status(200).json({ mensagem: 'Alteração efetuada com sucesso!'})
             
         } catch (error) {
-            
+            res.status(500).json({ erro: 'Não foi possível atualizar a classe.'})
         }
     }
 
     async excluir(req, res) {
         try {
-            
+            const { id } = req.params
+            const classe = await Classe.findByPk(id)
+
+            await classe.destroy()
+            res.status(200).json({ mensagem: 'Classe excluída com sucesso!'})
+
         } catch (error) {
-            
+            res.status(500).json({ erro: 'Não foi possível excluir a classe.'})
         }
     }
 }
