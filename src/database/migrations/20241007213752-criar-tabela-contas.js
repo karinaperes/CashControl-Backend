@@ -3,14 +3,14 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('tipos_mov', { 
+    await queryInterface.createTable('contas', { 
       id: {
         primaryKey: true,
         autoIncrement: true,
         type: Sequelize.INTEGER,
         allowNull: false
       },
-      tipo_mov: {
+      nome_conta: {
         type: Sequelize.STRING,
         allowNull: false
       },
@@ -22,10 +22,12 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
-    });    
+    });
+     
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('tipos_mov');     
+    await queryInterface.dropTable('contas');
+    
   }
 };

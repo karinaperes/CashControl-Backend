@@ -3,16 +3,26 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('contas', { 
+    await queryInterface.createTable('classes', { 
       id: {
-        primaryKey: true,
+        primaryKey:true,
         autoIncrement: true,
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: false        
       },
-      conta: {
+      nome_classe: {
         type: Sequelize.STRING,
         allowNull: false
+      },
+      tipo_mov_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'tipos_mov',
+          key: 'id'
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
       },
       createdAt: {
         allowNull: false,
@@ -22,12 +32,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
-    });
-     
+    });     
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('contas');
-    
+    await queryInterface.dropTable('classes'); 
   }
 };
