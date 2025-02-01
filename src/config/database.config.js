@@ -2,9 +2,9 @@ const { config } = require('dotenv') // Importa a função config do pacote dote
 config()
 module.exports = {
 	dialect: process.env.DIALECT, //Qual banco de dados está utilizando
-	host: process.env.HOST, //Qual servidor está utilizando
-	username: process.env.USERNAMEDB, //Qual o nome do seu usuário no postgres
-	password: process.env.PASSWORDDB, //Qual a senha do seu usuário no postgres
-	database: process.env.DATABASE, //Qual o nome do seu database no postgres
-	port: process.env.PORTDB //Qual porta do seu postgres (Normalmente é a 5432)
+	host: process.env.DB_HOST, //Qual servidor está utilizando
+	username: process.env.DB_USER, //Qual o nome do seu usuário no postgres
+	password: process.env.DB_PASSWORD, //Qual a senha do seu usuário no postgres
+	database: process.env.DB_NAME, //Qual o nome do seu database no postgres
+	port: process.env.DB_PORT //Qual porta do seu postgres (Normalmente é a 5432)
 }
