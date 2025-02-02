@@ -11,14 +11,14 @@ const Usuario = connection.define('usuarios', {
         type: DataTypes.STRING,
         allowNull: false        
     },
-    password: {
+    senha: {
         type: DataTypes.STRING,
         allowNull: false
     }
 })
 
 Usuario.beforeSave(async (user) => {
-    user.password = await hash(user.password, 8)
+    user.senha = await hash(user.senha, 8)
     return user
 })
 

@@ -4,12 +4,12 @@ class LoginController {
     async logar(req, res) {
         try {
             const email = req.body.email
-            const password = req.body.password
+            const senha = req.body.senha
 
             if (!email) {
                 return res.status(400).json({ erro: 'Informe o email' })
             }
-            if (!password) {
+            if (!senha) {
                 return res.status(400).json({ erro: 'Informe a senha' })
             }
 
@@ -20,7 +20,7 @@ class LoginController {
                 return res.status(404).json({ erro: 'Email e senha não correspondem a nenhum usuário' })
             }
 
-            const hashSenha = await compare(password, usuario.password)
+            const hashSenha = await compare(senha, usuario.senha)
             if(hashSenha === false) {
                 return res.status(400).json({ mensagem: 'Senha inválida' })
             }
