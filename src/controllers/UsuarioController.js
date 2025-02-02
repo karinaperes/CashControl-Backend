@@ -1,11 +1,23 @@
 const Usuario = require('../models/Usuario')
+const { body, validationResult } = require('express-validator')
+
+
 
 class UsuarioController {
     async cadastrar(req, res) {
         try {
-            const { nome, email, password } = req.body
+            await body('nome').notEmpty().withMessage('O nome é obrigatório').run(req)
+            await body('email').isEmail().withMessage('Email inválido').run(req)
+            await body('senha').isLength({ min: 4 }).withMessage('A senha deve ter pelo menos 4 caracteres').run(req)
 
-            if (!(nome || email || password)) {
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() })
+            }
+
+            const { nome, email, senha } = req.body
+
+            if (!(nome || email || senha)) {
                 return res.status(400).json({ erro: 'Todos os campos devem ser preenchidos!'})
             }
 
@@ -53,6 +65,15 @@ class UsuarioController {
 
     async atualizar(req, res) {
         try {
+            await body('nome').notEmpty().withMessage('O nome é obrigatório').run(req)
+            await body('email').isEmail().withMessage('Email inválido').run(req)
+            await body('senha').isLength({ min: 4 }).withMessage('A senha deve ter pelo menos 4 caracteres').run(req)
+
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() })
+            }
+
             const { id } = req.params
             const usuario = await Usuario.findByPk(id)
 
