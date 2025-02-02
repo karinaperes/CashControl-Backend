@@ -1,8 +1,17 @@
 const Classe = require('../models/Classe')
+const { body, validationResult } = require('express-validator')
 
 class ClasseController {
     async cadastrar(req, res) {
         try {
+            await body('nome_classe').notEmpty().withMessage('O nome é obrigatório').run(req)
+            await body('tipo_mov_id').isInt().withMessage('Informe o tipo de movimento').run(req)
+
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() })
+            }
+
             const { nome_classe, tipo_mov_id } = req.body
 
             if (!(nome_classe || tipo_mov_id)) {
@@ -53,6 +62,14 @@ class ClasseController {
 
     async atualizar(req, res) {
         try {
+            await body('nome_classe').notEmpty().withMessage('O nome é obrigatório').run(req)
+            await body('tipo_mov_id').isInt().withMessage('Informe o tipo de movimento').run(req)
+
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() })
+            }
+
             const { id } = req.params
             const classe = await Classe.findByPk(id)
 
