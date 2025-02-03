@@ -75,6 +75,17 @@ class UsuarioController {
             const { id } = req.params
             const usuario = await Usuario.findByPk(id)
 
+            const emailExistente = await Usuario.findOne({
+                where: {
+                    email: req.body.email,
+                    id: { [Op.ne]: id } // Exclui o próprio registro da verificação
+                }
+            })
+            
+            if (emailExistente) {
+                return res.status(409).json({ mensagem: 'Email já cadastrado!' })
+            }
+
             await usuario.update(req.body)
             await usuario.save()
             res.status(200).json({ mensagem: 'Alteração efetuada com sucesso!'})
