@@ -1,8 +1,6 @@
 const Usuario = require('../models/Usuario')
 const { body, validationResult } = require('express-validator')
 
-
-
 class UsuarioController {
     async cadastrar(req, res) {
         try {
