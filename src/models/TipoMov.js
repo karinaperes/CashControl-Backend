@@ -4,7 +4,8 @@ const { connection } = require("../database/connection")
 const TipoMov = connection.define('tipos_movimentos', {
 	nome_tipo_mov: {
 		type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+		unique: true
 	}
 })
 

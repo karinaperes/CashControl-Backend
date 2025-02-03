@@ -4,7 +4,8 @@ const { connection } = require("../database/connection")
 const Classe = connection.define('classes', {
 	nome_classe: {
 		type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true
 	},
     tipo_mov_id: {
         type: DataTypes.INTEGER,
