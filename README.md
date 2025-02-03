@@ -1,4 +1,5 @@
-:construction: Em construção
+##:construction: Em construção
+
 Aplicação de Controle Financeiro
 Descrição
 Esta é uma aplicação de controle financeiro desenvolvida para ajudar os usuários a gerenciar suas despesas e receitas. Com ela, é possível cadastrar e visualizar relatórios diários e mensais das movimentações financeiras, facilitando o controle e administração dos valores.
