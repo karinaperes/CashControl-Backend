@@ -1,4 +1,5 @@
 const Classe = require('../models/Classe')
+const Movimento = require('../models/Movimento')
 const { body, validationResult } = require('express-validator')
 
 class ClasseController {
@@ -85,8 +86,18 @@ class ClasseController {
     async excluir(req, res) {
         try {
             const { id } = req.params
-            const classe = await Classe.findByPk(id)
 
+            const movimentoVinculado = await Movimento.findOne({
+                where: {
+                    classe_id: id
+                }
+            })
+
+            if (movimentoVinculado) {
+                return res.status(400).json({ erro: 'Esta classe está vinculada a um movimento e não pode ser excluída.' })
+            }
+
+            const classe = await Classe.findByPk(id)
             await classe.destroy()
             res.status(200).json({ mensagem: 'Classe excluída com sucesso!'})
 

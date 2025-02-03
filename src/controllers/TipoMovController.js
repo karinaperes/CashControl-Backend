@@ -1,4 +1,5 @@
 const TipoMov = require('../models/TipoMov')
+const Classe = require('../models/Classe')
 const { body, validationResult } = require('express-validator')
 
 class TipoMovController {
