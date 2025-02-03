@@ -4,7 +4,8 @@ const { connection } = require("../database/connection")
 const Conta = connection.define('contas', {
 	nome_conta: {
 		type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+		unique: true
 	}
 })
 
