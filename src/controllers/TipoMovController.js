@@ -1,8 +1,16 @@
 const TipoMov = require('../models/TipoMov')
+const { body, validationResult } = require('express-validator')
 
 class TipoMovController {
     async cadastrar(req, res) {
         try {
+            await body('nome_tipo_mov').notEmpty().withMessage('Informe o nome do tipo de movimento.').run(req)
+                
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() })
+            }
+
             const { nome_tipo_mov } = req.body
 
             if (!nome_tipo_mov) {
@@ -53,6 +61,13 @@ class TipoMovController {
 
     async atualizar(req, res) {
         try {
+            await body('nome_tipo_mov').notEmpty().withMessage('Informe o nome do tipo de movimento.').run(req)
+                
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() })
+            }
+
             const { id } = req.params
             const tipoMov = await TipoMov.findByPk(id)
 
@@ -68,9 +83,19 @@ class TipoMovController {
     async excluir(req, res) {
         try {
             const { id } = req.params
-            const tipoMov = await TipoMov.findByPk(id)
 
-            await tipoMov.destroy()
+            const classeVinculada = await Classe.findOne({
+                where: {
+                    tipo_mov_id: id
+                }
+            })
+
+            if (classeVinculada) {
+                return res.status(400).json({ erro: 'Este tipo de movimento está vinculado a uma classe e não pode ser excluído.' })
+            }
+
+            const tipoMov = await TipoMov.findByPk(id)
+            await tipoMov.destroy()            
             res.status(200).json({ mensagem: 'Tipo de movimento excluído com sucesso!'})
 
         } catch (error) {
