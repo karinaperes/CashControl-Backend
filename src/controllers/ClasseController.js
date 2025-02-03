@@ -1,6 +1,7 @@
 const Classe = require('../models/Classe')
 const Movimento = require('../models/Movimento')
 const { body, validationResult } = require('express-validator')
+const { Op } = require('sequelize')
 
 class ClasseController {
     async cadastrar(req, res) {
@@ -73,6 +74,17 @@ class ClasseController {
 
             const { id } = req.params
             const classe = await Classe.findByPk(id)
+
+            const classeExistente = await Classe.findOne({
+                where: {
+                    nome_classe: req.body.nome_classe,
+                    id: { [Op.ne]: id } // Exclui o próprio registro da verificação
+                }
+            })
+            
+            if (classeExistente) {
+                return res.status(409).json({ mensagem: 'Classe já cadastrada!' })
+            }
 
             await classe.update(req.body)
             await classe.save()

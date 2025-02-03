@@ -72,6 +72,17 @@ class TipoMovController {
             const { id } = req.params
             const tipoMov = await TipoMov.findByPk(id)
 
+            const tipoMovExistente = await TipoMov.findOne({
+                where: {
+                    nome_tipo_mov: req.body.nome_tipo_mov,
+                    id: { [Op.ne]: id } // Exclui o próprio registro da verificação
+                }
+            })
+            
+            if (tipoMovExistente) {
+                return res.status(409).json({ mensagem: 'Tipo de movimento já cadastrado!' })
+            }
+
             await tipoMov.update(req.body)
             await tipoMov.save()
             res.status(200).json({ mensagem: 'Alteração efetuada com sucesso!'})

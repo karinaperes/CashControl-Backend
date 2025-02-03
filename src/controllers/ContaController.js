@@ -1,4 +1,5 @@
 const Conta = require('../models/Conta')
+const { Op } = require ('sequelize')
 
 class ContaController {
     async cadastrar(req, res) {
@@ -55,6 +56,17 @@ class ContaController {
         try {
             const { id } = req.params
             const conta = await Conta.findByPk(id)
+
+            const contaExistente = await Conta.findOne({
+                where: {
+                    nome_conta: req.body.nome_conta,
+                    id: { [Op.ne]: id } // Exclui o próprio registro da verificação
+                }
+            });
+            
+            if (contaExistente) {
+                return res.status(409).json({ mensagem: 'Conta já cadastrada!' });
+            }
 
             await conta.update(req.body)
             await conta.save()

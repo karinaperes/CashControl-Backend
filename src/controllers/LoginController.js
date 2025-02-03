@@ -1,8 +1,12 @@
 const Usuario = require('../models/Usuario')
+const { body, validationResult } = require('express-validator')
 
 class LoginController {
     async logar(req, res) {
         try {
+            await body('email').isEmail().withMessage('Email inválido').run(req)
+            await body('senha').isLength({ min: 4 }).withMessage('A senha deve ter pelo menos 4 caracteres').run(req)
+
             const email = req.body.email
             const senha = req.body.senha
 
@@ -17,7 +21,7 @@ class LoginController {
                 where: { email: email }
             })
             if (!usuario) {
-                return res.status(404).json({ erro: 'Email e senha não correspondem a nenhum usuário' })
+                return res.status(404).json({ erro: 'Email não corresponde a nenhum usuário' })
             }
 
             const hashSenha = await compare(senha, usuario.senha)
