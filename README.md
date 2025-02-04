@@ -60,3 +60,5 @@ Contribuições são bem-vindas! Sinta-se à vontade para abrir uma issue ou env
 •	Informação da forma de pagamento ou recebimento (dinheiro, PIX, cartão de crédito, etc.) 
 
 •	Importação de extratos bancários
+
+•   Adicionar número da conta no cadastro de contas
