@@ -14,11 +14,7 @@ class ClasseController {
                 return res.status(400).json({ errors: errors.array() })
             }
 
-            const { nome_classe, tipo_mov_id } = req.body
-
-            if (!(nome_classe || tipo_mov_id)) {
-                return res.status(400).json({ erro: 'Todos os campos devem ser preenchidos!'})
-            }
+            const { nome_classe } = req.body
 
             const classeExistente = await Classe.findOne({
                 where: {
