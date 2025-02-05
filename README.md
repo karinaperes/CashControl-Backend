@@ -62,3 +62,5 @@ Contribuições são bem-vindas! Sinta-se à vontade para abrir uma issue ou env
 •	Importação de extratos bancários
 
 •   Adicionar número da conta no cadastro de contas
+
+•   Converter ponto para virgula para a separação de casas decimais.
