@@ -1,5 +1,7 @@
 const Usuario = require('../models/Usuario')
 const { body, validationResult } = require('express-validator')
+const { compare } = require('bcrypt')
+const { sign } = require('jsonwebtoken')
 
 class LoginController {
     async logar(req, res) {
@@ -7,15 +9,13 @@ class LoginController {
             await body('email').isEmail().withMessage('Email inválido').run(req)
             await body('senha').isLength({ min: 4 }).withMessage('A senha deve ter pelo menos 4 caracteres').run(req)
 
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             const email = req.body.email
             const senha = req.body.senha
-
-            if (!email) {
-                return res.status(400).json({ erro: 'Informe o email' })
-            }
-            if (!senha) {
-                return res.status(400).json({ erro: 'Informe a senha' })
-            }
 
             const usuario = await Usuario.findOne({
                 where: { email: email }
@@ -25,7 +25,7 @@ class LoginController {
             }
 
             const hashSenha = await compare(senha, usuario.senha)
-            if(hashSenha === false) {
+            if(!hashSenha) {
                 return res.status(400).json({ mensagem: 'Senha inválida' })
             }
 

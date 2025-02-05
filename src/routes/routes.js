@@ -1,4 +1,5 @@
 const { Router } = require('express')
+const authMiddleware = require('../middlewares/authMiddleware')
 const loginRoutes = require('./login.routes')
 const usuarioRoutes = require('./usuario.routes')
 const classeRoutes = require('./classe.routes')
@@ -10,9 +11,9 @@ const routes = Router()
 
 routes.use('/login', loginRoutes)
 routes.use('/usuario', usuarioRoutes)
-routes.use('/classe', classeRoutes)
-routes.use('/conta', contaRoutes)
-routes.use('/movimento', movimentoRoutes)
-routes.use('/tipomov', tipoMovRoutes)
+routes.use('/classe', authMiddleware, classeRoutes)
+routes.use('/conta', authMiddleware, contaRoutes)
+routes.use('/movimento', authMiddleware, movimentoRoutes)
+routes.use('/tipomov', authMiddleware, tipoMovRoutes)
 
 module.exports = routes
