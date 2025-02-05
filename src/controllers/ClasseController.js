@@ -6,7 +6,13 @@ const { Op } = require('sequelize')
 class ClasseController {
     async cadastrar(req, res) {
         try {
-            await body('nome_classe').notEmpty().withMessage('O nome é obrigatório').run(req)
+            await body('nome_classe').notEmpty().withMessage('O nome é obrigatório').custom(value => {
+                if (value.trim().length === 0) {
+                    throw new Error('O nome não pode conter apenas espaços em branco')
+                }
+                return true
+            })
+                .run(req)
             await body('tipo_mov_id').isInt().withMessage('Informe o tipo de movimento').run(req)
 
             const errors = validationResult(req)
@@ -23,16 +29,16 @@ class ClasseController {
             })
 
             if (classeExistente) {
-                return res.status(409).json({ mensagem: 'Classe já cadastrada!'})
+                return res.status(409).json({ mensagem: 'Classe já cadastrada!' })
             }
 
             const classe = await Classe.create(req.body)
-            
+
             res.status(201).json(classe)
 
         } catch (error) {
             console.log(error.message)
-            res.status(500).json({ erro: 'Não foi possível efetuar o cadastro da classe.'})
+            res.status(500).json({ erro: 'Não foi possível efetuar o cadastro da classe.' })
         }
     }
 
@@ -41,7 +47,7 @@ class ClasseController {
             const classes = await Classe.findAll()
             res.status(200).json(classes)
         } catch (error) {
-            res.status(500).json({ erro: 'Não foi possível listar as classes.'})
+            res.status(500).json({ erro: 'Não foi possível listar as classes.' })
         }
     }
 
@@ -51,10 +57,10 @@ class ClasseController {
             const classe = await Classe.findByPk(id)
 
             res.status(200).json(classe)
-            
+
         } catch (error) {
             console.log(error.message)
-            res.status(500).json({ erro: 'Não foi possível listar a classe'})
+            res.status(500).json({ erro: 'Não foi possível listar a classe' })
         }
     }
 
@@ -77,17 +83,17 @@ class ClasseController {
                     id: { [Op.ne]: id } // Exclui o próprio registro da verificação
                 }
             })
-            
+
             if (classeExistente) {
                 return res.status(409).json({ mensagem: 'Classe já cadastrada!' })
             }
 
             await classe.update(req.body)
             await classe.save()
-            res.status(200).json({ mensagem: 'Alteração efetuada com sucesso!'})
-            
+            res.status(200).json({ mensagem: 'Alteração efetuada com sucesso!' })
+
         } catch (error) {
-            res.status(500).json({ erro: 'Não foi possível atualizar a classe.'})
+            res.status(500).json({ erro: 'Não foi possível atualizar a classe.' })
         }
     }
 
@@ -107,10 +113,10 @@ class ClasseController {
 
             const classe = await Classe.findByPk(id)
             await classe.destroy()
-            res.status(200).json({ mensagem: 'Classe excluída com sucesso!'})
+            res.status(200).json({ mensagem: 'Classe excluída com sucesso!' })
 
         } catch (error) {
-            res.status(500).json({ erro: 'Não foi possível excluir a classe.'})
+            res.status(500).json({ erro: 'Não foi possível excluir a classe.' })
         }
     }
 }
