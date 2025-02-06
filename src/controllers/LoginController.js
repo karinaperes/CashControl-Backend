@@ -6,8 +6,18 @@ const { sign } = require('jsonwebtoken')
 class LoginController {
     async logar(req, res) {
         try {
-            await body('email').isEmail().withMessage('Email inválido').run(req)
-            await body('senha').isLength({ min: 4 }).withMessage('A senha deve ter pelo menos 4 caracteres').run(req)
+            await body('email').isEmail().withMessage('Email inválido').custom(value => {
+                if (value.trim().length === 0) {
+                    throw new Error('O email não pode conter apenas espaços em branco')
+                }
+                return true
+            }).run(req)
+            await body('senha').isLength({ min: 4 }).withMessage('A senha deve ter pelo menos 4 caracteres').custom(value => {
+                if (value.trim().length === 0) {
+                    throw new Error('A senha não pode conter apenas espaços em branco')
+                }
+                return true
+            }).run(req)
 
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
