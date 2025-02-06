@@ -4,20 +4,31 @@ const { body, validationResult } = require('express-validator')
 class UsuarioController {
     async cadastrar(req, res) {
         try {
-            await body('nome').notEmpty().withMessage('O nome é obrigatório').run(req)
-            await body('email').isEmail().withMessage('Email inválido').run(req)
-            await body('senha').isLength({ min: 4 }).withMessage('A senha deve ter pelo menos 4 caracteres').run(req)
+            await body('nome').notEmpty().withMessage('O nome é obrigatório').custom(value => {
+                if (value.trim().length === 0) {
+                    throw new Error('O nome não pode conter apenas espaços em branco')
+                }
+                return true
+            }).run(req)
+            await body('email').isEmail().withMessage('Email inválido').custom(value => {
+                if (value.trim().length === 0) {
+                    throw new Error('O email não pode conter apenas espaços em branco')
+                }
+                return true
+            }).run(req)
+            await body('senha').isLength({ min: 4 }).withMessage('A senha deve ter pelo menos 4 caracteres').custom(value => {
+                if (value.trim().length === 0) {
+                    throw new Error('A senha não pode conter apenas espaços em branco')
+                }
+                return true
+            }).run(req)
 
             const errors = validationResult(req)
             if (!errors.isEmpty()) {
                 return res.status(400).json({ errors: errors.array() })
             }
 
-            const { nome, email, senha } = req.body
-
-            if (!(nome || email || senha)) {
-                return res.status(400).json({ erro: 'Todos os campos devem ser preenchidos!'})
-            }
+            const { email } = req.body
 
             const emailExistente = await Usuario.findOne({
                 where: {
