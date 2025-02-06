@@ -1,9 +1,22 @@
 const Conta = require('../models/Conta')
 const { Op } = require ('sequelize')
+const { body, validationResult } = require('express-validator')
 
 class ContaController {
     async cadastrar(req, res) {
         try {
+            await body('nome_conta').notEmpty().withMessage('O nome é obrigatório').custom(value => {
+                if (value.trim().length === 0) {
+                    throw new Error('O nome não pode conter apenas espaços em branco')
+                }
+                return true
+            }).run(req)
+
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() })
+            }
+
             const { nome_conta } = req.body
 
             if (!nome_conta) {
