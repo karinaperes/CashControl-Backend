@@ -28,6 +28,8 @@ class UsuarioController {
                 return res.status(400).json({ errors: errors.array() })
             }
 
+            const { email } = req.body
+
             const emailExistente = await Usuario.findOne({
                 where: {
                     email: email
