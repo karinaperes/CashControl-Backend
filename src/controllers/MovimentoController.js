@@ -1,13 +1,23 @@
 const Movimento = require('../models/Movimento')
+const { body, validationResult } = require('express-validator')
 
 class MovimentoController {
     async cadastrar(req, res) {
         try {
-            const { data, vencimento, descricao, classe_id, valor } = req.body
+            await body('data').isDate().withMessage('Insira uma data de competência válida').run(req)
+            await body('vencimento').isDate().withMessage('Insira uma data de vencimento válida').run(req)
+            await body('classe_id').isInt().withMessage('Selecione uma classe').run(req)
+            await body('valor').isFloat().withMessage('O valor deve ser inserido').custom(value => {
+                if (!/^\d+(\.\d{2})$/.test(value)) {
+                    throw new Error('O valor deve ter exatamente duas casas decimais')
+                  }
+                  return true
+                }).run(req)
 
-            if (!(data || vencimento || valor)) {
-                return res.status(400).json({ erro: 'Todos os campos devem ser preenchidos!'})
-            }           
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() })
+            }
 
             const movimento = await Movimento.create(req.body)
             
@@ -19,7 +29,7 @@ class MovimentoController {
         }
     }
 
-    async listar(req, res) {
+    async listar(res) {
         try {
             const movimentos = await Movimento.findAll()
             res.status(200).json(movimentos)
