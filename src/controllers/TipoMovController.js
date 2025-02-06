@@ -5,17 +5,16 @@ const { body, validationResult } = require('express-validator')
 class TipoMovController {
     async cadastrar(req, res) {
         try {
-            await body('nome_tipo_mov').notEmpty().withMessage('Informe o nome do tipo de movimento.').run(req)
+            await body('nome_tipo_mov').notEmpty().withMessage('Informe o nome do tipo de movimento.').custom(value => {
+                if (value.trim().length === 0) {
+                    throw new Error('O tipo de movimento não pode conter apenas espaços em branco')
+                }
+                return true
+            }).run(req)
                 
             const errors = validationResult(req)
             if (!errors.isEmpty()) {
                 return res.status(400).json({ errors: errors.array() })
-            }
-
-            const { nome_tipo_mov } = req.body
-
-            if (!nome_tipo_mov) {
-                return res.status(400).json({ erro: 'Todos os campos devem ser preenchidos!'})
             }
 
             const tipoMovExistente = await TipoMov.findOne({
