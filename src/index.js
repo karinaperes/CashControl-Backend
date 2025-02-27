@@ -1,3 +1,4 @@
 const { Server } = require('./server')
 
-new Server()
+const serverInstance = new Server();
+serverInstance.start();
