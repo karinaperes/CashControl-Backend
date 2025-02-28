@@ -6,7 +6,17 @@ const Conta = connection.define('contas', {
 		type: DataTypes.STRING,
         allowNull: false,
 		unique: true
-	}
+	},
+	usuario_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'Usuario',
+            key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
+    }
 })
 
 module.exports = Conta

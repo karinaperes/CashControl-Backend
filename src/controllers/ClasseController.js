@@ -15,6 +15,8 @@ class ClasseController {
                 .run(req)
             await body('tipo_mov_id').isInt().withMessage('Informe o tipo de movimento').run(req)
 
+            await body('usuario_id').isInt().withMessage('Informe o usuário').run(req)
+
             const errors = validationResult(req)
             if (!errors.isEmpty()) {
                 return res.status(400).json({ errors: errors.array() })
