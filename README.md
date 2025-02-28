@@ -38,6 +38,11 @@ Esta é uma aplicação de controle financeiro desenvolvida para ajudar os usuá
 
 •	JWT
 
+•	Jest
+
+•	Supertest
+
+
 ### Instalação
 
 Para instalar e rodar a aplicação localmente, siga os passos abaixo:
