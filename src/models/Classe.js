@@ -16,6 +16,16 @@ const Classe = connection.define('classes', {
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
+    },
+    usuario_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'Usuario',
+            key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
     }
 })
 
