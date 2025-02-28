@@ -95,6 +95,17 @@ class ContaController {
     async excluir(req, res) {
         try {
             const { id } = req.params
+
+            const movimentoVinculado = await Movimento.findOne({
+                where: {
+                    conta_id: id
+                }
+            })
+
+            if (movimentoVinculado) {
+                return res.status(400).json({ erro: 'Esta conta está vinculada a um movimento e não pode ser excluída.' })
+            }
+
             const conta = await Conta.findByPk(id)
 
             await conta.destroy()
