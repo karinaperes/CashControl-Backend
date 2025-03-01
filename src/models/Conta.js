@@ -11,7 +11,7 @@ const Conta = connection.define('contas', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'Usuario',
+            model: 'usuarios',
             key: 'id'
         },
         onUpdate: 'CASCADE',
