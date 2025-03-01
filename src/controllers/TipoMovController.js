@@ -1,6 +1,7 @@
 const TipoMov = require('../models/TipoMov')
 const Classe = require('../models/Classe')
 const { body, validationResult } = require('express-validator')
+const { Op } = require("sequelize");
 
 class TipoMovController {
     async cadastrar(req, res) {
@@ -21,9 +22,11 @@ class TipoMovController {
 
             const tipoMovExistente = await TipoMov.findOne({
                 where: {
-                    nome_tipo_mov: nome_tipo_mov
+                    nome_tipo_mov: req.body.nome_tipo_mov
                 }
             })
+
+            console.log('TipoMov Existente:', tipoMovExistente);
 
             if (tipoMovExistente) {
                 return res.status(409).json({ mensagem: 'Tipo de movimento já cadastrado!'})
@@ -41,8 +44,9 @@ class TipoMovController {
 
     async listar(req, res) {
         try {
-            const tipoMovs = await TipoMov.findAll()
-            res.status(200).json(tipoMovs)
+            const tiposMov = await TipoMov.findAll()
+            console.log('Tipos de Movimento no BD:', tiposMov);
+            res.status(200).json(tiposMov)
         } catch (error) {
             res.status(500).json({ erro: 'Não foi possível listar os tipos de movimentos.'})
         }
@@ -52,6 +56,10 @@ class TipoMovController {
         try {
             const { id } = req.params
             const tipoMov = await TipoMov.findByPk(id)
+
+            if (!tipoMov) {
+                return res.status(404).json({ erro: "Tipo de movimento não encontrado." });
+            }
 
             res.status(200).json(tipoMov)
             
@@ -102,6 +110,10 @@ class TipoMovController {
                     tipo_mov_id: id
                 }
             })
+
+            if (!tipoMov) {
+                return res.status(404).json({ erro: "Tipo de movimento não encontrado." });
+            }
 
             if (classeVinculada) {
                 return res.status(400).json({ erro: 'Este tipo de movimento está vinculado a uma classe e não pode ser excluído.' })

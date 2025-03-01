@@ -27,7 +27,7 @@ const Movimento = connection.define('movimentos', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'Classe',
+      model: 'classes',
       key: 'id'
     },
     onUpdate: 'CASCADE',
@@ -37,7 +37,7 @@ const Movimento = connection.define('movimentos', {
      type: DataTypes.INTEGER,
      allowNull: false,
      references: {       
-       model: 'Conta',
+       model: 'contas',
        key: 'id'
      },
      onUpdate: 'CASCADE',
@@ -47,7 +47,7 @@ const Movimento = connection.define('movimentos', {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Usuario',
+        model: 'usuarios',
         key: 'id'
       },
       onUpdate: 'CASCADE',

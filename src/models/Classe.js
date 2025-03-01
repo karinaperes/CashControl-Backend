@@ -11,7 +11,7 @@ const Classe = connection.define('classes', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'TipoMov',
+            model: 'tipos_mov',
             key: 'id'
         },
         onUpdate: 'CASCADE',
@@ -21,7 +21,7 @@ const Classe = connection.define('classes', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'Usuario',
+            model: 'usuarios',
             key: 'id'
         },
         onUpdate: 'CASCADE',
