@@ -17,6 +17,8 @@ const Usuario = connection.define('usuarios', {
         type: DataTypes.STRING,
         allowNull: false
     }
+}, {
+    timestamps: true // Adiciona createdAt e updatedAt automaticamente
 })
 
 Usuario.beforeSave(async (user) => {

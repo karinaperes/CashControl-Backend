@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('tipos_movimentos', { 
+    await queryInterface.createTable('tipos_mov', { 
       id: {
         primaryKey: true,
         autoIncrement: true,
@@ -12,7 +12,8 @@ module.exports = {
       },
       nome_tipo_mov: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true
       },
       usuario_id: {
         type: Sequelize.INTEGER,
@@ -36,6 +37,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('tipos_movimentos');     
+    await queryInterface.dropTable('tipos_mov');     
   }
 };
