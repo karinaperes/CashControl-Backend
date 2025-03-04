@@ -11,7 +11,7 @@ const Classe = connection.define('classes', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'tipos_mov',
+            model: 'tipos_movs',
             key: 'id'
         },
         onUpdate: 'CASCADE',

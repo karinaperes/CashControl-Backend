@@ -18,7 +18,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'tipos_mov',
+          model: 'tipos_movs',
           key: 'id'
         },
         onDelete: 'CASCADE',
