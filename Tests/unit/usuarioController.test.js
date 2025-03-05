@@ -64,4 +64,35 @@ describe('UsuarioController', () => {
       ]))
     })
   })
+
+  describe('Listar um usuário específico', () => {
+    let usuarioCriado
+
+    beforeEach(async () => {
+        usuarioCriado = await Usuario.create({
+        nome: 'Usuário Teste',
+        email: 'teste@example.com',
+        senha: 'senha123'
+      })
+    })
+
+    it('deve lista um usuário específico', async () => {
+      const req = { params: { id: usuarioCriado.id } };
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+      }
+
+      await UsuarioController.listarUm(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(200)
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: usuarioCriado.id,
+          nome: 'Usuário Teste',
+          email: 'teste@example.com'
+        })
+      );
+    })
+  })
 })
