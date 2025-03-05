@@ -101,6 +101,7 @@ describe('Erros no UsuarioController', () => {
       expect.objectContaining({ errors: expect.any(Array) })
     );
   });
+
   it('deve retornar 500 ao ocorrer um erro interno no cadastro', async () => {
     jest.spyOn(Usuario, 'create').mockRejectedValue(new Error('Erro interno'));
 
@@ -123,5 +124,23 @@ describe('Erros no UsuarioController', () => {
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({ erro: 'Não foi possível efetuar o cadastro do usuário.' })
     );
-  });  
+  });
+
+  it('deve retornar 500 ao ocorrer um erro interno na listagem de usuários', async () => {
+    jest.spyOn(Usuario, 'findAll').mockRejectedValue(new Error('Erro interno'));
+  
+    const req = {};
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn()
+    };
+  
+    await UsuarioController.listar(req, res);
+  
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({ erro: 'Não foi possível listar os usuários.' })
+    );
+  });
+    
 })
