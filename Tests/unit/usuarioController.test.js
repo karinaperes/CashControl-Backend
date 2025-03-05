@@ -95,4 +95,43 @@ describe('UsuarioController', () => {
       );
     })
   })
+
+  describe('Atualizar usuário', () => {
+    let usuarioCriado
+
+    beforeEach(async () => {
+        usuarioCriado = await Usuario.create({
+        nome: 'Usuário Teste',
+        email: 'teste@example.com',
+        senha: 'senha123'
+      })
+    })
+
+    it('deve atualizar um usuário específico', async () => {
+      const req = { 
+        params: { id: usuarioCriado.id },
+        body: {
+          nome: 'Novo Nome',
+          email: 'novoteste@example.com',
+          senha: 'novaSenha123'
+        }
+      };
+        
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+      }
+
+      await UsuarioController.atualizar(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(200)
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({ mensagem: 'Alteração efetuada com sucesso!' })
+      );
+
+      const usuarioAtualizado = await Usuario.findByPk(usuarioCriado.id);
+      expect(usuarioAtualizado.nome).toBe('Novo Nome');
+      expect(usuarioAtualizado.email).toBe('novoteste@example.com');
+    })
+  })
 })

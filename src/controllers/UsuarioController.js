@@ -1,5 +1,6 @@
 const Usuario = require('../models/Usuario')
 const { body, validationResult } = require('express-validator')
+const { Op } = require('sequelize');
 
 class UsuarioController {
     async cadastrar(req, res) {
