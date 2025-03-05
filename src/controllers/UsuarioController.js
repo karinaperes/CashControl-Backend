@@ -37,7 +37,7 @@ class UsuarioController {
             })
 
             if (emailExistente) {
-                return res.status(409).json({ mensagem: 'Email já cadastrado!'})
+                return res.status(409).json({ mensagem: 'E-mail já cadastrado!'})
             }
 
             const usuario = await Usuario.create(req.body)
