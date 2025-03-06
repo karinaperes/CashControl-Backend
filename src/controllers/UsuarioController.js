@@ -65,6 +65,10 @@ class UsuarioController {
             const { id } = req.params
             const usuario = await Usuario.findByPk(id)
 
+            if(!usuario) {
+                return res.status(404).json({ mensagem: 'Usuário não encontrado!'})
+            }
+
             res.status(200).json(usuario)
             
         } catch (error) {
@@ -86,6 +90,10 @@ class UsuarioController {
 
             const { id } = req.params
             const usuario = await Usuario.findByPk(id)
+
+            if(!usuario) {
+                return res.status(404).json({ mensagem: 'Usuário não encontrado!'})
+            }
 
             const emailExistente = await Usuario.findOne({
                 where: {
@@ -111,6 +119,10 @@ class UsuarioController {
         try {
             const { id } = req.params
             const usuario = await Usuario.findByPk(id)
+
+            if(!usuario) {
+                return res.status(404).json({ mensagem: 'Usuário não encontrado!'})
+            }
 
             await usuario.destroy()
             res.status(200).json({ mensagem: 'Usuário excluído com sucesso!'})
