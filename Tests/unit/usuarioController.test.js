@@ -134,4 +134,34 @@ describe('UsuarioController', () => {
       expect(usuarioAtualizado.email).toBe('novoteste@example.com');
     })
   })
+
+  describe('Excluir usuário', () => {
+    let usuarioCriado
+
+    beforeEach(async () => {
+        usuarioCriado = await Usuario.create({
+        nome: 'Usuário Teste',
+        email: 'teste@example.com',
+        senha: 'senha123'
+      })
+    })
+
+    it('deve excluir um usuário específico', async () => {
+      const req = { params: { id: usuarioCriado.id } };
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+      }
+
+      await UsuarioController.excluir(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(200)
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({ mensagem: 'Usuário excluído com sucesso!' })
+      ); 
+      
+      const usuarioDeletado = await Usuario.findByPk(usuarioCriado.id);
+      expect(usuarioDeletado).toBeNull();
+    })
+  })  
 })
