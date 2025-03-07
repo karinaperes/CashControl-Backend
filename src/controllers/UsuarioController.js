@@ -45,8 +45,7 @@ class UsuarioController {
             
             res.status(201).json(usuario)
 
-        } catch (error) {
-            console.log(error.message)
+        } catch (error) {            
             res.status(500).json({ erro: 'Não foi possível efetuar o cadastro do usuário.'})
         }
     }
@@ -61,9 +60,13 @@ class UsuarioController {
     }
 
     async listarUm(req, res) {
+        // console.log(req, res)
         try {
             const { id } = req.params
-            const usuario = await Usuario.findByPk(id)
+            const idInt = Number(id); // Converte para número
+            const usuario = await Usuario.findByPk(idInt)
+
+            console.log("Usuário encontrado:", usuario);
 
             if(!usuario) {
                 return res.status(404).json({ mensagem: 'Usuário não encontrado!'})
@@ -72,8 +75,8 @@ class UsuarioController {
             res.status(200).json(usuario)
             
         } catch (error) {
-            console.log(error.message)
-            res.status(500).json({ erro: 'Não foi possível listar o usuário'})
+            // console.error(error);
+            res.status(500).json({ erro: 'Não foi possível listar o usuário.' })
         }
     }
 

@@ -142,5 +142,154 @@ describe('Erros no UsuarioController', () => {
       expect.objectContaining({ erro: 'Não foi possível listar os usuários.' })
     );
   });
-    
+
+  // it('deve retornar 404 ao tentar listar um usuário inexistente', async () => {
+  //   const req = { params: { id: 9999 } }; // ID que não existe no banco
+  //   const res = {
+  //     status: jest.fn().mockReturnThis(),
+  //     json: jest.fn()
+  //   };
+
+  //   const result = await UsuarioController.listarUm(req, res);
+  //   console.log(result, req, res)
+
+  //   expect(res.status).toHaveBeenCalledWith(404);
+  //   expect(res.json).toHaveBeenCalledWith(
+  //     expect.objectContaining({ mensagem: 'Usuário não encontrado!' })
+  //   );
+  // });
+
+  it('deve retornar 404 ao tentar listar um usuário inexistente', async () => {
+    const req = { params: { id: 9999 } };
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn()
+    };
+
+    // MOCKANDO O REPOSITÓRIO/ SERVIÇO
+    jest.spyOn(Usuario, 'findOne').mockResolvedValue(null);
+
+    await UsuarioController.listarUm(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({ mensagem: 'Usuário não encontrado!' })
+    );
+  });
+
+  it('deve retornar 500 ao ocorrer um erro interno na busca de um usuário', async () => {
+    jest.spyOn(Usuario, 'findByPk').mockRejectedValue(new Error('Erro interno'));
+
+    const req = { params: { id: 1 } };
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn()
+    };
+
+    await UsuarioController.listarUm(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({ erro: 'Não foi possível listar o usuário.' })
+    );
+  });
+
+  // ====== ATUALIZAR USUÁRIO ======
+  // // it('deve retornar 404 ao tentar atualizar um usuário inexistente', async () => {
+  // //   const req = {
+  // //     params: { id: 999 },
+  // //     body: { nome: 'Novo Nome' }
+  // //   };
+
+  // //   const res = {
+  // //     status: jest.fn().mockReturnThis(),
+  // //     json: jest.fn()
+  // //   };
+
+  // //   await UsuarioController.atualizar(req, res);
+
+  // //   expect(res.status).toHaveBeenCalledWith(404);
+  // //   expect(res.json).toHaveBeenCalledWith(
+  // //     expect.objectContaining({ mensagem: 'Usuário não encontrado!' })
+  // //   );
+  // // });
+
+  // // it('deve retornar 400 ao tentar atualizar com dados inválidos', async () => {
+  // //   const usuarioCriado = await Usuario.create({
+  // //     nome: 'Usuário Teste',
+  // //     email: 'teste@example.com',
+  // //     senha: 'senha123'
+  // //   });
+
+  // //   const req = {
+  // //     params: { id: usuarioCriado.id },
+  // //     body: { nome: '' } // Nome vazio (inválido)
+  // //   };
+
+  // //   const res = {
+  // //     status: jest.fn().mockReturnThis(),
+  // //     json: jest.fn()
+  // //   };
+
+  // //   await UsuarioController.atualizar(req, res);
+
+  // //   expect(res.status).toHaveBeenCalledWith(400);
+  // //   expect(res.json).toHaveBeenCalledWith(
+  // //     expect.objectContaining({ errors: expect.any(Array) })
+  // //   );
+  // // });
+
+  // // it('deve retornar 500 ao ocorrer um erro interno na atualização', async () => {
+  // //   jest.spyOn(Usuario, 'update').mockRejectedValue(new Error('Erro interno'));
+
+  // //   const req = {
+  // //     params: { id: 1 },
+  // //     body: { nome: 'Novo Nome' }
+  // //   };
+
+  // //   const res = {
+  // //     status: jest.fn().mockReturnThis(),
+  // //     json: jest.fn()
+  // //   };
+
+  // //   await UsuarioController.atualizar(req, res);
+
+  // //   expect(res.status).toHaveBeenCalledWith(500);
+  // //   expect(res.json).toHaveBeenCalledWith(
+  // //     expect.objectContaining({ erro: 'Não foi possível atualizar o usuário.' })
+  // //   );
+  // // });
+
+  // // // ====== EXCLUIR USUÁRIO ======
+  // // it('deve retornar 404 ao tentar excluir um usuário inexistente', async () => {
+  // //   const req = { params: { id: 9999 } }; // ID inexistente
+  // //   const res = {
+  // //     status: jest.fn().mockReturnThis(),
+  // //     json: jest.fn()
+  // //   };
+
+  // //   await UsuarioController.excluir(req, res);
+
+  // //   expect(res.status).toHaveBeenCalledWith(404);
+  // //   expect(res.json).toHaveBeenCalledWith(
+  // //     expect.objectContaining({ mensagem: 'Usuário não encontrado!' })
+  // //   );
+  // });
+
+  it('deve retornar 500 ao ocorrer um erro interno na exclusão', async () => {
+    jest.spyOn(Usuario, 'destroy').mockRejectedValue(new Error('Erro interno'));
+
+    const req = { params: { id: 1 } };
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn()
+    };
+
+    await UsuarioController.excluir(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({ erro: 'Não foi possível excluir o usuário.' })
+    );
+  });    
 })
