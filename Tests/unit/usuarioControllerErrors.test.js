@@ -143,15 +143,33 @@ describe('Erros no UsuarioController', () => {
     );
   });
 
+  // it('deve retornar 404 ao tentar listar um usuário inexistente', async () => {
+  //   const req = { params: { id: 9999 } }; // ID que não existe no banco
+  //   const res = {
+  //     status: jest.fn().mockReturnThis(),
+  //     json: jest.fn()
+  //   };
+
+  //   const result = await UsuarioController.listarUm(req, res);
+  //   console.log(result, req, res)
+
+  //   expect(res.status).toHaveBeenCalledWith(404);
+  //   expect(res.json).toHaveBeenCalledWith(
+  //     expect.objectContaining({ mensagem: 'Usuário não encontrado!' })
+  //   );
+  // });
+
   it('deve retornar 404 ao tentar listar um usuário inexistente', async () => {
-    const req = { params: { id: 9999 } }; // ID que não existe no banco
+    const req = { params: { id: 9999 } };
     const res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn()
     };
 
-    const result = await UsuarioController.listarUm(req, res);
-    console.log(result, req, res)
+    // MOCKANDO O REPOSITÓRIO/ SERVIÇO
+    jest.spyOn(Usuario, 'findOne').mockResolvedValue(null);
+
+    await UsuarioController.listarUm(req, res);
 
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith(
