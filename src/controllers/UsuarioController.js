@@ -92,7 +92,8 @@ class UsuarioController {
             }
 
             const { id } = req.params
-            const usuario = await Usuario.findByPk(id)
+            const idInt = Number(id); // Converte para número
+            const usuario = await Usuario.findByPk(idInt)
 
             if(!usuario) {
                 return res.status(404).json({ mensagem: 'Usuário não encontrado!'})
