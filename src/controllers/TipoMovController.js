@@ -16,6 +16,7 @@ class TipoMovController {
             await body('usuario_id').isInt().withMessage('Informe o usuário').run(req)
                 
             const errors = validationResult(req)
+            console.log('Erros de Validação:', errors.array());
             if (!errors.isEmpty()) {
                 return res.status(400).json({ errors: errors.array() })
             }
@@ -58,7 +59,7 @@ class TipoMovController {
             const tipoMov = await TipoMov.findByPk(id)
 
             if (!tipoMov) {
-                return res.status(404).json({ erro: "Tipo de movimento não encontrado." });
+                return res.status(404).json({ mensagem: "Tipo de movimento não encontrado!" });
             }
 
             res.status(200).json(tipoMov)
@@ -80,6 +81,10 @@ class TipoMovController {
 
             const { id } = req.params
             const tipoMov = await TipoMov.findByPk(id)
+
+            if (!tipoMov) {
+                return res.status(404).json({ mensagem: "Tipo de movimento não encontrado!" });
+            }
 
             const tipoMovExistente = await TipoMov.findOne({
                 where: {
@@ -111,15 +116,16 @@ class TipoMovController {
                 }
             })
 
+            const tipoMov = await TipoMov.findByPk(id)
+
             if (!tipoMov) {
-                return res.status(404).json({ erro: "Tipo de movimento não encontrado." });
+                return res.status(404).json({ mensagem: "Tipo de movimento não encontrado!" });
             }
 
             if (classeVinculada) {
                 return res.status(400).json({ erro: 'Este tipo de movimento está vinculado a uma classe e não pode ser excluído.' })
             }
-
-            const tipoMov = await TipoMov.findByPk(id)
+            
             await tipoMov.destroy()            
             res.status(200).json({ mensagem: 'Tipo de movimento excluído com sucesso!'})
 
