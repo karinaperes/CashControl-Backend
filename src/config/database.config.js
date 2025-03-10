@@ -1,4 +1,4 @@
-const { config } = require("dotenv"); // Importa a função config do pacote dotenv, que carrega as variáveis do arquivo .env para o objeto process.env
+const { config } = require('dotenv'); // Importa a função config do pacote dotenv, que carrega as variáveis do arquivo .env para o objeto process.env
 config();
 module.exports = {
   dialect: process.env.DIALECT, //Qual banco de dados está utilizando

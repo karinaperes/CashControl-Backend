@@ -1,9 +1,9 @@
-const { DataTypes } = require("sequelize");
-const { connection } = require("../database/connection");
-const { hash } = require("bcrypt");
+const { DataTypes } = require('sequelize');
+const { connection } = require('../database/connection');
+const { hash } = require('bcrypt');
 
 const Usuario = connection.define(
-  "usuarios",
+  'usuarios',
   {
     nome: {
       type: DataTypes.STRING,

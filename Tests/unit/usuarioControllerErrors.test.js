@@ -1,7 +1,7 @@
-const UsuarioController = require("../../src/controllers/UsuarioController");
-const Usuario = require("../../src/models/Usuario");
+const UsuarioController = require('../../src/controllers/UsuarioController');
+const Usuario = require('../../src/models/Usuario');
 
-describe("Erros no UsuarioController", () => {
+describe('Erros no UsuarioController', () => {
   beforeEach(async () => {
     jest.restoreAllMocks(); // Restaura todos os mocks antes de cada teste
     await Usuario.destroy({ where: {} }); // Limpa o banco antes de cada teste
@@ -11,11 +11,11 @@ describe("Erros no UsuarioController", () => {
     await Usuario.sequelize.close(); // Fecha conexão com o banco após os testes
   });
 
-  it("deve retornar 400 ao tentar cadastrar sem nome", async () => {
+  it('deve retornar 400 ao tentar cadastrar sem nome', async () => {
     const req = {
       body: {
-        email: "teste@example.com",
-        senha: "senha123",
+        email: 'teste@example.com',
+        senha: 'senha123',
       },
     };
 
@@ -32,12 +32,12 @@ describe("Erros no UsuarioController", () => {
     );
   });
 
-  it("deve retornar 400 ao tentar cadastrar com email inválido", async () => {
+  it('deve retornar 400 ao tentar cadastrar com email inválido', async () => {
     const req = {
       body: {
-        nome: "Usuário Teste",
-        email: "email-invalido",
-        senha: "senha123",
+        nome: 'Usuário Teste',
+        email: 'email-invalido',
+        senha: 'senha123',
       },
     };
 
@@ -53,18 +53,18 @@ describe("Erros no UsuarioController", () => {
       expect.objectContaining({ errors: expect.any(Array) })
     );
   });
-  it("deve retornar 409 ao tentar cadastrar com email já existente", async () => {
+  it('deve retornar 409 ao tentar cadastrar com email já existente', async () => {
     await Usuario.create({
-      nome: "Usuário Teste",
-      email: "teste@example.com",
-      senha: "senha123",
+      nome: 'Usuário Teste',
+      email: 'teste@example.com',
+      senha: 'senha123',
     });
 
     const req = {
       body: {
-        nome: "Novo Usuário",
-        email: "teste@example.com", // Mesmo email já cadastrado
-        senha: "senha123",
+        nome: 'Novo Usuário',
+        email: 'teste@example.com', // Mesmo email já cadastrado
+        senha: 'senha123',
       },
     };
 
@@ -78,17 +78,17 @@ describe("Erros no UsuarioController", () => {
     expect(res.status).toHaveBeenCalledWith(409);
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
-        mensagem: "E-mail já cadastrado!",
+        mensagem: 'E-mail já cadastrado!',
       })
     );
   });
 
-  it("deve retornar 400 ao tentar cadastrar com senha menor que 4 caracteres", async () => {
+  it('deve retornar 400 ao tentar cadastrar com senha menor que 4 caracteres', async () => {
     const req = {
       body: {
-        nome: "Usuário Teste",
-        email: "teste@example.com",
-        senha: "123",
+        nome: 'Usuário Teste',
+        email: 'teste@example.com',
+        senha: '123',
       },
     };
 
@@ -105,14 +105,14 @@ describe("Erros no UsuarioController", () => {
     );
   });
 
-  it("deve retornar 500 ao ocorrer um erro interno no cadastro", async () => {
-    jest.spyOn(Usuario, "create").mockRejectedValue(new Error("Erro interno"));
+  it('deve retornar 500 ao ocorrer um erro interno no cadastro', async () => {
+    jest.spyOn(Usuario, 'create').mockRejectedValue(new Error('Erro interno'));
 
     const req = {
       body: {
-        nome: "Usuário Teste",
-        email: "teste@example.com",
-        senha: "senha123",
+        nome: 'Usuário Teste',
+        email: 'teste@example.com',
+        senha: 'senha123',
       },
     };
 
@@ -126,13 +126,13 @@ describe("Erros no UsuarioController", () => {
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
-        erro: "Não foi possível efetuar o cadastro do usuário.",
+        erro: 'Não foi possível efetuar o cadastro do usuário.',
       })
     );
   });
 
-  it("deve retornar 500 ao ocorrer um erro interno na listagem de usuários", async () => {
-    jest.spyOn(Usuario, "findAll").mockRejectedValue(new Error("Erro interno"));
+  it('deve retornar 500 ao ocorrer um erro interno na listagem de usuários', async () => {
+    jest.spyOn(Usuario, 'findAll').mockRejectedValue(new Error('Erro interno'));
 
     const req = {};
     const res = {
@@ -144,14 +144,14 @@ describe("Erros no UsuarioController", () => {
 
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith(
-      expect.objectContaining({ erro: "Não foi possível listar os usuários." })
+      expect.objectContaining({ erro: 'Não foi possível listar os usuários.' })
     );
   });
 
-  it("deve retornar 404 ao tentar listar um usuário inexistente", async () => {
+  it('deve retornar 404 ao tentar listar um usuário inexistente', async () => {
     jest
-      .spyOn(Usuario, "update")
-      .mockRejectedValue(new Error("Dados inexistentes"));
+      .spyOn(Usuario, 'update')
+      .mockRejectedValue(new Error('Dados inexistentes'));
     const req = { params: { id: 9999 } };
     const res = {
       status: jest.fn().mockReturnThis(),
@@ -159,20 +159,20 @@ describe("Erros no UsuarioController", () => {
     };
 
     // MOCKANDO O REPOSITÓRIO/ SERVIÇO
-    jest.spyOn(Usuario, "findOne").mockResolvedValue(null);
+    jest.spyOn(Usuario, 'findOne').mockResolvedValue(null);
 
     await UsuarioController.listarUm(req, res);
 
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith(
-      expect.objectContaining({ mensagem: "Usuário não encontrado!" })
+      expect.objectContaining({ mensagem: 'Usuário não encontrado!' })
     );
   });
 
-  it("deve retornar 500 ao ocorrer um erro interno na busca de um usuário", async () => {
+  it('deve retornar 500 ao ocorrer um erro interno na busca de um usuário', async () => {
     jest
-      .spyOn(Usuario, "findByPk")
-      .mockRejectedValue(new Error("Erro interno"));
+      .spyOn(Usuario, 'findByPk')
+      .mockRejectedValue(new Error('Erro interno'));
 
     const req = { params: { id: 1 } };
     const res = {
@@ -184,18 +184,18 @@ describe("Erros no UsuarioController", () => {
 
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith(
-      expect.objectContaining({ erro: "Não foi possível listar o usuário." })
+      expect.objectContaining({ erro: 'Não foi possível listar o usuário.' })
     );
   });
 
   // ====== ATUALIZAR USUÁRIO ======
-  it("deve retornar 404 ao tentar atualizar um usuário inexistente", async () => {
+  it('deve retornar 404 ao tentar atualizar um usuário inexistente', async () => {
     const req = {
       params: { id: 9999 },
       body: {
-        nome: "Novo Nome",
-        email: "novoemail@email.com",
-        senha: "1234",
+        nome: 'Novo Nome',
+        email: 'novoemail@email.com',
+        senha: '1234',
       },
     };
     const res = {
@@ -203,31 +203,31 @@ describe("Erros no UsuarioController", () => {
       json: jest.fn(),
     };
 
-    jest.spyOn(Usuario, "findByPk").mockResolvedValue(null);
+    jest.spyOn(Usuario, 'findByPk').mockResolvedValue(null);
 
     await UsuarioController.atualizar(req, res);
 
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith(
-      expect.objectContaining({ mensagem: "Usuário não encontrado!" })
+      expect.objectContaining({ mensagem: 'Usuário não encontrado!' })
     );
   });
 
-  it("deve retornar 400 ao tentar atualizar com dados inválidos", async () => {
+  it('deve retornar 400 ao tentar atualizar com dados inválidos', async () => {
     const usuarioCriado = await Usuario.create({
-      nome: "Usuário Teste",
-      email: "teste1@example.com",
-      senha: "senha123",
+      nome: 'Usuário Teste',
+      email: 'teste1@example.com',
+      senha: 'senha123',
     });
 
-    jest.spyOn(Usuario, "update").mockRejectedValue(new Error("Erro interno"));
+    jest.spyOn(Usuario, 'update').mockRejectedValue(new Error('Erro interno'));
 
     const req = {
       params: { id: usuarioCriado.id },
       body: {
-        nome: "",
-        email: "",
-        senha: "",
+        nome: '',
+        email: '',
+        senha: '',
       },
     };
 
@@ -244,15 +244,15 @@ describe("Erros no UsuarioController", () => {
     );
   });
 
-  it("deve retornar 500 ao ocorrer um erro interno na atualização", async () => {
-    jest.spyOn(Usuario, "update").mockRejectedValue(new Error("Erro interno"));
+  it('deve retornar 500 ao ocorrer um erro interno na atualização', async () => {
+    jest.spyOn(Usuario, 'update').mockRejectedValue(new Error('Erro interno'));
 
     const req = {
-      params: { id: "a" },
+      params: { id: 'a' },
       body: {
-        nome: "Novo Nome",
-        email: "email@email.com",
-        senha: "12345",
+        nome: 'Novo Nome',
+        email: 'email@email.com',
+        senha: '12345',
       },
     };
 
@@ -265,31 +265,31 @@ describe("Erros no UsuarioController", () => {
 
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith(
-      expect.objectContaining({ erro: "Não foi possível atualizar o usuário." })
+      expect.objectContaining({ erro: 'Não foi possível atualizar o usuário.' })
     );
   });
 
   // ====== EXCLUIR USUÁRIO ======
-  it("deve retornar 404 ao tentar excluir um usuário inexistente", async () => {
+  it('deve retornar 404 ao tentar excluir um usuário inexistente', async () => {
     const req = { params: { id: 9999 } }; // ID inexistente
     const res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
     };
 
-    jest.spyOn(Usuario, "findByPk").mockResolvedValue(null);
+    jest.spyOn(Usuario, 'findByPk').mockResolvedValue(null);
 
     await UsuarioController.excluir(req, res);
 
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith(
-      expect.objectContaining({ mensagem: "Usuário não encontrado!" })
+      expect.objectContaining({ mensagem: 'Usuário não encontrado!' })
     );
   });
 
-  it("deve retornar 500 ao ocorrer um erro interno na exclusão", async () => {
-    jest.spyOn(Usuario, "findByPk").mockResolvedValue({
-      destroy: jest.fn().mockRejectedValue(new Error("Erro interno")),
+  it('deve retornar 500 ao ocorrer um erro interno na exclusão', async () => {
+    jest.spyOn(Usuario, 'findByPk').mockResolvedValue({
+      destroy: jest.fn().mockRejectedValue(new Error('Erro interno')),
     });
 
     const req = { params: { id: 1 } };
@@ -302,7 +302,7 @@ describe("Erros no UsuarioController", () => {
 
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith(
-      expect.objectContaining({ erro: "Não foi possível excluir o usuário." })
+      expect.objectContaining({ erro: 'Não foi possível excluir o usuário.' })
     );
   });
 });

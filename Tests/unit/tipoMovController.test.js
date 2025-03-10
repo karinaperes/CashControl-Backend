@@ -1,14 +1,14 @@
-const TipoMovController = require("../../src/controllers/TipoMovController");
-const TipoMov = require("../../src/models/TipoMov");
-const Usuario = require("../../src/models/Usuario");
+const TipoMovController = require('../../src/controllers/TipoMovController');
+const TipoMov = require('../../src/models/TipoMov');
+const Usuario = require('../../src/models/Usuario');
 
-describe("TipoMovController", () => {
+describe('TipoMovController', () => {
   beforeAll(async () => {
     await Usuario.create({
       id: 2,
-      nome: "Usuário Teste",
-      email: "teste@email.com",
-      senha: "12345",
+      nome: 'Usuário Teste',
+      email: 'teste@email.com',
+      senha: '12345',
     });
   });
 
@@ -22,11 +22,11 @@ describe("TipoMovController", () => {
     await TipoMov.sequelize.close();
   });
 
-  describe("Cadastrar tipo de movimento", () => {
-    it("deve cadastrar um novo tipo de movimento", async () => {
+  describe('Cadastrar tipo de movimento', () => {
+    it('deve cadastrar um novo tipo de movimento', async () => {
       const req = {
         body: {
-          nome_tipo_mov: "Teste",
+          nome_tipo_mov: 'Teste',
           usuario_id: 2,
         },
       };
@@ -41,22 +41,22 @@ describe("TipoMovController", () => {
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          nome_tipo_mov: "Teste",
+          nome_tipo_mov: 'Teste',
           usuario_id: 2,
         })
       );
     });
   });
 
-  describe("Listar tipos de movimentos", () => {
+  describe('Listar tipos de movimentos', () => {
     beforeEach(async () => {
       await TipoMov.create({
-        nome_tipo_mov: "Tipo de movimento Teste",
+        nome_tipo_mov: 'Tipo de movimento Teste',
         usuario_id: 2,
       });
     });
 
-    it("deve listar todos os tipos de movimentos", async () => {
+    it('deve listar todos os tipos de movimentos', async () => {
       const req = {}; // Nenhum parâmetro necessário para listagem
       const res = {
         status: jest.fn().mockReturnThis(),
@@ -69,7 +69,7 @@ describe("TipoMovController", () => {
       expect(res.json).toHaveBeenCalledWith(
         expect.arrayContaining([
           expect.objectContaining({
-            nome_tipo_mov: "Tipo de movimento Teste",
+            nome_tipo_mov: 'Tipo de movimento Teste',
             usuario_id: 2,
           }),
         ])
@@ -77,17 +77,17 @@ describe("TipoMovController", () => {
     });
   });
 
-  describe("Listar um tipo de movimento específico", () => {
+  describe('Listar um tipo de movimento específico', () => {
     let tipoMovCriado;
 
     beforeEach(async () => {
       tipoMovCriado = await TipoMov.create({
-        nome_tipo_mov: "Tipo de movimento Teste",
+        nome_tipo_mov: 'Tipo de movimento Teste',
         usuario_id: 2,
       });
     });
 
-    it("deve listar um tipo de movimento específico", async () => {
+    it('deve listar um tipo de movimento específico', async () => {
       const req = { params: { id: tipoMovCriado.id } };
       const res = {
         status: jest.fn().mockReturnThis(),
@@ -100,28 +100,28 @@ describe("TipoMovController", () => {
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
           id: tipoMovCriado.id,
-          nome_tipo_mov: "Tipo de movimento Teste",
+          nome_tipo_mov: 'Tipo de movimento Teste',
           usuario_id: 2,
         })
       );
     });
   });
 
-  describe("Atualizar tipo de movimento", () => {
+  describe('Atualizar tipo de movimento', () => {
     let tipoMovCriado;
 
     beforeEach(async () => {
       tipoMovCriado = await TipoMov.create({
-        nome_tipo_mov: "Tipo de movimento Teste",
+        nome_tipo_mov: 'Tipo de movimento Teste',
         usuario_id: 2,
       });
     });
 
-    it("deve atualizar um tipo de movimento específico", async () => {
+    it('deve atualizar um tipo de movimento específico', async () => {
       const req = {
         params: { id: tipoMovCriado.id },
         body: {
-          nome_tipo_mov: "Novo tipo Mov",
+          nome_tipo_mov: 'Novo tipo Mov',
           usuario_id: 2,
         },
       };
@@ -135,25 +135,25 @@ describe("TipoMovController", () => {
 
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
-        expect.objectContaining({ mensagem: "Alteração efetuada com sucesso!" })
+        expect.objectContaining({ mensagem: 'Alteração efetuada com sucesso!' })
       );
 
       const tipoMovAtualizado = await TipoMov.findByPk(tipoMovCriado.id);
-      expect(tipoMovAtualizado.nome_tipo_mov).toBe("Novo tipo Mov");
+      expect(tipoMovAtualizado.nome_tipo_mov).toBe('Novo tipo Mov');
     });
   });
 
-  describe("Excluir tipo de movimento", () => {
+  describe('Excluir tipo de movimento', () => {
     let tipoMovCriado;
 
     beforeEach(async () => {
       tipoMovCriado = await TipoMov.create({
-        nome_tipo_mov: "Tipo de movimento Teste",
+        nome_tipo_mov: 'Tipo de movimento Teste',
         usuario_id: 2,
       });
     });
 
-    it("deve excluir um tipo de movimento específico", async () => {
+    it('deve excluir um tipo de movimento específico', async () => {
       const req = { params: { id: tipoMovCriado.id } };
       const res = {
         status: jest.fn().mockReturnThis(),
@@ -165,7 +165,7 @@ describe("TipoMovController", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          mensagem: "Tipo de movimento excluído com sucesso!",
+          mensagem: 'Tipo de movimento excluído com sucesso!',
         })
       );
 

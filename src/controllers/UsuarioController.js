@@ -1,36 +1,36 @@
-const Usuario = require("../models/Usuario");
-const { body, validationResult } = require("express-validator");
-const { Op } = require("sequelize");
+const Usuario = require('../models/Usuario');
+const { body, validationResult } = require('express-validator');
+const { Op } = require('sequelize');
 
 class UsuarioController {
   async cadastrar(req, res) {
     try {
-      await body("nome")
+      await body('nome')
         .notEmpty()
-        .withMessage("O nome é obrigatório")
+        .withMessage('O nome é obrigatório')
         .custom((value) => {
           if (value.trim().length === 0) {
-            throw new Error("O nome não pode conter apenas espaços em branco");
+            throw new Error('O nome não pode conter apenas espaços em branco');
           }
           return true;
         })
         .run(req);
-      await body("email")
+      await body('email')
         .isEmail()
-        .withMessage("Email inválido")
+        .withMessage('Email inválido')
         .custom((value) => {
           if (value.trim().length === 0) {
-            throw new Error("O email não pode conter apenas espaços em branco");
+            throw new Error('O email não pode conter apenas espaços em branco');
           }
           return true;
         })
         .run(req);
-      await body("senha")
+      await body('senha')
         .isLength({ min: 4 })
-        .withMessage("A senha deve ter pelo menos 4 caracteres")
+        .withMessage('A senha deve ter pelo menos 4 caracteres')
         .custom((value) => {
           if (value.trim().length === 0) {
-            throw new Error("A senha não pode conter apenas espaços em branco");
+            throw new Error('A senha não pode conter apenas espaços em branco');
           }
           return true;
         })
@@ -50,7 +50,7 @@ class UsuarioController {
       });
 
       if (emailExistente) {
-        return res.status(409).json({ mensagem: "E-mail já cadastrado!" });
+        return res.status(409).json({ mensagem: 'E-mail já cadastrado!' });
       }
 
       const usuario = await Usuario.create(req.body);
@@ -59,7 +59,7 @@ class UsuarioController {
     } catch (error) {
       res
         .status(500)
-        .json({ erro: "Não foi possível efetuar o cadastro do usuário." });
+        .json({ erro: 'Não foi possível efetuar o cadastro do usuário.' });
     }
   }
 
@@ -68,7 +68,7 @@ class UsuarioController {
       const usuarios = await Usuario.findAll();
       res.status(200).json(usuarios);
     } catch (error) {
-      res.status(500).json({ erro: "Não foi possível listar os usuários." });
+      res.status(500).json({ erro: 'Não foi possível listar os usuários.' });
     }
   }
 
@@ -79,29 +79,29 @@ class UsuarioController {
       const idInt = Number(id); // Converte para número
       const usuario = await Usuario.findByPk(idInt);
 
-      console.log("Usuário encontrado:", usuario);
+      console.log('Usuário encontrado:', usuario);
 
       if (!usuario) {
-        return res.status(404).json({ mensagem: "Usuário não encontrado!" });
+        return res.status(404).json({ mensagem: 'Usuário não encontrado!' });
       }
 
       res.status(200).json(usuario);
     } catch (error) {
       // console.error(error);
-      res.status(500).json({ erro: "Não foi possível listar o usuário." });
+      res.status(500).json({ erro: 'Não foi possível listar o usuário.' });
     }
   }
 
   async atualizar(req, res) {
     try {
-      await body("nome")
+      await body('nome')
         .notEmpty()
-        .withMessage("O nome é obrigatório")
+        .withMessage('O nome é obrigatório')
         .run(req);
-      await body("email").isEmail().withMessage("Email inválido").run(req);
-      await body("senha")
+      await body('email').isEmail().withMessage('Email inválido').run(req);
+      await body('senha')
         .isLength({ min: 4 })
-        .withMessage("A senha deve ter pelo menos 4 caracteres")
+        .withMessage('A senha deve ter pelo menos 4 caracteres')
         .run(req);
 
       const errors = validationResult(req);
@@ -114,7 +114,7 @@ class UsuarioController {
       const usuario = await Usuario.findByPk(idInt);
 
       if (!usuario) {
-        return res.status(404).json({ mensagem: "Usuário não encontrado!" });
+        return res.status(404).json({ mensagem: 'Usuário não encontrado!' });
       }
 
       const emailExistente = await Usuario.findOne({
@@ -125,14 +125,14 @@ class UsuarioController {
       });
 
       if (emailExistente) {
-        return res.status(409).json({ mensagem: "Email já cadastrado!" });
+        return res.status(409).json({ mensagem: 'Email já cadastrado!' });
       }
 
       await usuario.update(req.body);
       await usuario.save();
-      res.status(200).json({ mensagem: "Alteração efetuada com sucesso!" });
+      res.status(200).json({ mensagem: 'Alteração efetuada com sucesso!' });
     } catch (error) {
-      res.status(500).json({ erro: "Não foi possível atualizar o usuário." });
+      res.status(500).json({ erro: 'Não foi possível atualizar o usuário.' });
     }
   }
 
@@ -142,13 +142,13 @@ class UsuarioController {
       const usuario = await Usuario.findByPk(id);
 
       if (!usuario) {
-        return res.status(404).json({ mensagem: "Usuário não encontrado!" });
+        return res.status(404).json({ mensagem: 'Usuário não encontrado!' });
       }
 
       await usuario.destroy();
-      res.status(200).json({ mensagem: "Usuário excluído com sucesso!" });
+      res.status(200).json({ mensagem: 'Usuário excluído com sucesso!' });
     } catch (error) {
-      res.status(500).json({ erro: "Não foi possível excluir o usuário." });
+      res.status(500).json({ erro: 'Não foi possível excluir o usuário.' });
     }
   }
 }
