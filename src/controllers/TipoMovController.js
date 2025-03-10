@@ -49,11 +49,9 @@ class TipoMovController {
       res.status(201).json(tipoMov);
     } catch (error) {
       console.log(error.message);
-      res
-        .status(500)
-        .json({
-          erro: "Não foi possível efetuar o cadastro do tipo de movimento.",
-        });
+      res.status(500).json({
+        erro: "Não foi possível efetuar o cadastro do tipo de movimento.",
+      });
     }
   }
 
@@ -152,11 +150,9 @@ class TipoMovController {
       }
 
       if (classeVinculada) {
-        return res
-          .status(400)
-          .json({
-            erro: "Este tipo de movimento está vinculado a uma classe e não pode ser excluído.",
-          });
+        return res.status(400).json({
+          erro: "Este tipo de movimento está vinculado a uma classe e não pode ser excluído.",
+        });
       }
 
       await tipoMov.destroy();

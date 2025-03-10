@@ -124,11 +124,9 @@ class ClasseController {
       });
 
       if (movimentoVinculado) {
-        return res
-          .status(400)
-          .json({
-            erro: "Esta classe está vinculada a um movimento e não pode ser excluída.",
-          });
+        return res.status(400).json({
+          erro: "Esta classe está vinculada a um movimento e não pode ser excluída.",
+        });
       }
 
       const classe = await Classe.findByPk(id);
