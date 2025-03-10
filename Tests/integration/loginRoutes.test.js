@@ -2,7 +2,6 @@ const request = require('supertest');
 const { Server } = require('../../src/server');
 const { connection } = require('../../src/database/connection');
 const Usuario = require('../../src/models/Usuario');
-const jwt = require('jsonwebtoken');
 
 const serverInstance = new Server();
 
