@@ -1,8 +1,8 @@
-const { DataTypes } = require("sequelize"); // Importando o componente DataTypes do Sequelize
-const { connection } = require("../database/connection");
+const { DataTypes } = require('sequelize'); // Importando o componente DataTypes do Sequelize
+const { connection } = require('../database/connection');
 
 const TipoMov = connection.define(
-  "tipos_movs",
+  'tipos_movs',
   {
     nome_tipo_mov: {
       type: DataTypes.STRING,
@@ -13,11 +13,11 @@ const TipoMov = connection.define(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "usuarios",
-        key: "id",
+        model: 'usuarios',
+        key: 'id',
       },
-      onUpdate: "CASCADE",
-      onDelete: "CASCADE",
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
   },
   {

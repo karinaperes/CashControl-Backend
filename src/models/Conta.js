@@ -1,7 +1,7 @@
-const { DataTypes } = require("sequelize"); // Importando o componente DataTypes do Sequelize
-const { connection } = require("../database/connection");
+const { DataTypes } = require('sequelize'); // Importando o componente DataTypes do Sequelize
+const { connection } = require('../database/connection');
 
-const Conta = connection.define("contas", {
+const Conta = connection.define('contas', {
   nome_conta: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -11,11 +11,11 @@ const Conta = connection.define("contas", {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: "usuarios",
-      key: "id",
+      model: 'usuarios',
+      key: 'id',
     },
-    onUpdate: "CASCADE",
-    onDelete: "CASCADE",
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
   },
 });
 
