@@ -1,4 +1,5 @@
 const Conta = require('../models/Conta');
+const Movimento = require('../models/Movimento');
 const { Op } = require('sequelize');
 const { body, validationResult } = require('express-validator');
 
@@ -47,8 +48,7 @@ class ContaController {
       const conta = await Conta.create(req.body);
 
       res.status(201).json(conta);
-    } catch (error) {
-      console.log(error.message);
+    } catch (error) {;      
       res.status(500).json({ erro: 'Não foi possível cadastrar a conta.' });
     }
   }
@@ -67,9 +67,8 @@ class ContaController {
       const { id } = req.params;
       const conta = await Conta.findByPk(id);
 
-      res.status(200).status(conta);
-    } catch (error) {
-      console.log(error.messge);
+      res.status(200).json(conta);
+    } catch (error) {      
       res.status(500).json({ erro: 'Não foi possível listar a conta.' });
     }
   }
@@ -92,6 +91,7 @@ class ContaController {
 
       await conta.update(req.body);
       await conta.save();
+
       res.status(200).json({ mensagem: 'Alteração efetuada com sucesso!' });
     } catch (error) {
       res.status(500).json({ erro: 'Não foi possível atualizar a conta.' });
@@ -101,6 +101,7 @@ class ContaController {
   async excluir(req, res) {
     try {
       const { id } = req.params;
+      const conta = await Conta.findByPk(id);
 
       const movimentoVinculado = await Movimento.findOne({
         where: {
@@ -108,16 +109,19 @@ class ContaController {
         },
       });
 
+      if (!conta) {
+        return res.status(404).json({ erro: 'Conta não encontrada.' });
+      }
+
       if (movimentoVinculado) {
         return res.status(400).json({
           erro: 'Esta conta está vinculada a um movimento e não pode ser excluída.',
         });
       }
 
-      const conta = await Conta.findByPk(id);
-
       await conta.destroy();
-      res.status(200).json({ mensagem: 'conta excluída com sucesso!' });
+
+      res.status(200).json({ mensagem: 'Conta excluída com sucesso!' });
     } catch (error) {
       res.status(500).json({ erro: 'Não foi possível excluir a conta.' });
     }
