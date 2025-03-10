@@ -1,7 +1,7 @@
-const { DataTypes } = require("sequelize"); // Importando o componente DataTypes do Sequelize
-const { connection } = require("../database/connection");
+const { DataTypes } = require('sequelize'); // Importando o componente DataTypes do Sequelize
+const { connection } = require('../database/connection');
 
-const Classe = connection.define("classes", {
+const Classe = connection.define('classes', {
   nome_classe: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -11,21 +11,21 @@ const Classe = connection.define("classes", {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: "tipos_movs",
-      key: "id",
+      model: 'tipos_movs',
+      key: 'id',
     },
-    onUpdate: "CASCADE",
-    onDelete: "CASCADE",
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
   },
   usuario_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: "usuarios",
-      key: "id",
+      model: 'usuarios',
+      key: 'id',
     },
-    onUpdate: "CASCADE",
-    onDelete: "CASCADE",
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
   },
 });
 

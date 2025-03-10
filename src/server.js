@@ -1,7 +1,7 @@
-const express = require("express");
-const cors = require("cors");
-const { connection } = require("./database/connection");
-const routes = require("./routes/routes");
+const express = require('express');
+const cors = require('cors');
+const { connection } = require('./database/connection');
+const routes = require('./routes/routes');
 
 const PORT_API = process.env.PORT_API || 3000; // Definindo uma porta padrão
 
@@ -21,9 +21,9 @@ class Server {
   async database() {
     try {
       await connection.authenticate();
-      console.log("Conexão bem sucedida");
+      console.log('Conexão bem sucedida');
     } catch (error) {
-      console.error("Não foi possível conectar ao banco de dados", error);
+      console.error('Não foi possível conectar ao banco de dados', error);
       throw error;
     }
   }
