@@ -109,11 +109,9 @@ class ContaController {
       });
 
       if (movimentoVinculado) {
-        return res
-          .status(400)
-          .json({
-            erro: "Esta conta está vinculada a um movimento e não pode ser excluída.",
-          });
+        return res.status(400).json({
+          erro: "Esta conta está vinculada a um movimento e não pode ser excluída.",
+        });
       }
 
       const conta = await Conta.findByPk(id);
