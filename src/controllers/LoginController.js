@@ -1,27 +1,27 @@
-const Usuario = require('../models/Usuario');
-const { body, validationResult } = require('express-validator');
-const { compare } = require('bcrypt');
-const { sign } = require('jsonwebtoken');
+const Usuario = require("../models/Usuario");
+const { body, validationResult } = require("express-validator");
+const { compare } = require("bcrypt");
+const { sign } = require("jsonwebtoken");
 
 class LoginController {
   async logar(req, res) {
     try {
-      await body('email')
+      await body("email")
         .isEmail()
-        .withMessage('Email inválido')
+        .withMessage("Email inválido")
         .custom((value) => {
           if (value.trim().length === 0) {
-            throw new Error('O email não pode conter apenas espaços em branco');
+            throw new Error("O email não pode conter apenas espaços em branco");
           }
           return true;
         })
         .run(req);
-      await body('senha')
+      await body("senha")
         .isLength({ min: 4 })
-        .withMessage('A senha deve ter pelo menos 4 caracteres')
+        .withMessage("A senha deve ter pelo menos 4 caracteres")
         .custom((value) => {
           if (value.trim().length === 0) {
-            throw new Error('A senha não pode conter apenas espaços em branco');
+            throw new Error("A senha não pode conter apenas espaços em branco");
           }
           return true;
         })
@@ -41,12 +41,12 @@ class LoginController {
       if (!usuario) {
         return res
           .status(404)
-          .json({ erro: 'Email não corresponde a nenhum usuário' });
+          .json({ erro: "Email não corresponde a nenhum usuário" });
       }
 
       const hashSenha = await compare(senha, usuario.senha);
       if (!hashSenha) {
-        return res.status(400).json({ mensagem: 'Senha inválida' });
+        return res.status(400).json({ mensagem: "Senha inválida" });
       }
 
       const payload = {
@@ -61,7 +61,7 @@ class LoginController {
       console.log(error.message);
       return res
         .status(500)
-        .json({ erro: 'Solicitação não pôde ser atendida' });
+        .json({ erro: "Solicitação não pôde ser atendida" });
     }
   }
 }
