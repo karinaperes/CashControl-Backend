@@ -48,9 +48,7 @@ class ClasseController {
       res.status(201).json(classe);
     } catch (error) {
       console.log(error.message);
-      res
-        .status(500)
-        .json({ erro: "Não foi possível efetuar o cadastro da classe." });
+      res.status(500).json({ erro: "Não foi possível cadastrar a classe." });
     }
   }
 
@@ -75,7 +73,7 @@ class ClasseController {
       res.status(200).json(classe);
     } catch (error) {
       console.log(error.message);
-      res.status(500).json({ erro: "Não foi possível listar a classe" });
+      res.status(500).json({ erro: "Não foi possível listar a classe." });
     }
   }
 
