@@ -82,6 +82,10 @@ class ContaController {
       const { id } = req.params;
       const conta = await Conta.findByPk(id);
 
+      if(!conta) {
+        return res.status(404).json({ mensagem: 'Conta não encontrada!' });
+      }
+
       const contaExistente = await Conta.findOne({
         where: {
           nome_conta: req.body.nome_conta,
@@ -106,6 +110,10 @@ class ContaController {
     try {
       const { id } = req.params;
       const conta = await Conta.findByPk(id);
+
+      if(!conta) {
+        return res.status(404).json({ mensagem: 'Conta não encontrada!' });
+      }
 
       const movimentoVinculado = await Movimento.findOne({
         where: {
