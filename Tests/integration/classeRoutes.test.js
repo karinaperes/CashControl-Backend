@@ -4,26 +4,28 @@ const { connection } = require("../../src/database/connection");
 const jwt = require("jsonwebtoken");
 const serverInstance = new Server();
 const Usuario = require("../../src/models/Usuario");
-const Movimento = require("../../src/models/Movimento");
-const Classe = require("../../src/models/Classe");
 const TipoMov = require("../../src/models/TipoMov");
+const Movimento = require("../../src/models/Movimento");
+const Conta = require("../../src/models/Conta");
 
-describe("Testes de Integração - ContaController", () => {
+describe("Testes de Integração - ClasseController", () => {
   let app;
-  let contaCriada;
   let token;
   let usuarioCriado;
   let classeCriada;
   let tipoMovCriado;
+  let contaCriada;
 
   beforeAll(async () => {
     app = serverInstance.getApp(); // Obtenha o app (servidor Express)
     await connection.sync({ force: true }); // Limpa o banco e recria as tabelas
+
     usuarioCriado = await Usuario.create({
       nome: "Usuário Teste",
       email: "teste@email.com",
       senha: "12345",
     });
+
     console.log("Usuário criado:", usuarioCriado);
     token = jwt.sign(
       { id: usuarioCriado.id, nome: usuarioCriado.nome },
@@ -39,15 +41,22 @@ describe("Testes de Integração - ContaController", () => {
       email: "teste@email.com",
       senha: "12345",
     });
+
+    tipoMovCriado = await TipoMov.create({
+      nome_tipo_mov: "Tipo Mov teste",
+      usuario_id: usuarioCriado.id,
+    });
+
     const response = await request(app)
-      .post("/conta")
-      .set("Authorization", token) // Inclui o token no cabeçalho Authorization
+      .post("/classe")
+      .set("Authorization", token)
       .send({
-        nome_conta: "Conta Teste",
+        nome_classe: "Classe Teste",
+        tipo_mov_id: tipoMovCriado.id,
         usuario_id: usuarioCriado.id,
       });
 
-    contaCriada = response.body;
+    classeCriada = response.body;
   });
 
   afterAll(async () => {
@@ -55,47 +64,50 @@ describe("Testes de Integração - ContaController", () => {
   });
 
   // ✅ Teste de cadastro
-  describe("POST /conta", () => {
-    it("deve cadastrar uma nova conta", async () => {
+  describe("POST /classe", () => {
+    it("deve cadastrar uma nova classe", async () => {
       const response = await request(app)
-        .post("/conta")
+        .post("/classe")
         .set("Authorization", token)
         .send({
-          nome_conta: "Conta Teste Novo",
+          nome_classe: "classe Teste Novo",
+          tipo_mov_id: tipoMovCriado.id,
           usuario_id: usuarioCriado.id,
         });
 
       expect(response.status).toBe(201);
-      expect(response.body).toHaveProperty("nome_conta", "Conta Teste Novo");
+      expect(response.body).toHaveProperty("nome_classe", "classe Teste Novo");
       expect(response.body).toHaveProperty("usuario_id", usuarioCriado.id);
     });
 
-    it("deve retornar erro ao cadastrar Conta duplicado", async () => {
+    it("deve retornar erro ao cadastrar classe duplicado", async () => {
       const response = await request(app)
-        .post("/conta")
+        .post("/classe")
         .set("Authorization", token)
         .send({
-          nome_conta: "Conta Teste",
+          nome_classe: "Classe Teste",
+          tipo_mov_id: tipoMovCriado.id,
           usuario_id: usuarioCriado.id,
         });
 
       expect(response.status).toBe(409);
-      expect(response.body).toHaveProperty("mensagem", "Conta já cadastrada!");
+      expect(response.body).toHaveProperty("mensagem", "Classe já cadastrada!");
     });
   });
 
   // ✅ Teste de listar todos
-  describe("GET /conta", () => {
-    it("deve listar todas as contas", async () => {
+  describe("GET /classe", () => {
+    it("deve listar todas as classes", async () => {
       const response = await request(app)
-        .get("/conta")
+        .get("/classe")
         .set("Authorization", token);
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
-            nome_conta: "Conta Teste",
+            nome_classe: "Classe Teste",
+            tipo_mov_id: tipoMovCriado.id,
             usuario_id: usuarioCriado.id,
           }),
         ])
@@ -104,35 +116,50 @@ describe("Testes de Integração - ContaController", () => {
   });
 
   // ✅ Teste de listar um
-  describe("GET /conta/:id", () => {
-    it("deve listar uma conta pelo ID", async () => {
+  describe("GET /classe/:id", () => {
+    it("deve listar uma classe pelo ID", async () => {
       const response = await request(app)
-        .get(`/conta/${contaCriada.id}`)
+        .get(`/classe/${classeCriada.id}`)
         .set("Authorization", token);
 
       expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty("id", contaCriada.id);
-      expect(response.body).toHaveProperty("nome_conta", "Conta Teste");
+      expect(response.body).toHaveProperty("id", classeCriada.id);
+      expect(response.body).toHaveProperty(
+        "nome_classe",
+        classeCriada.nome_classe
+      );
+      expect(response.body).toHaveProperty(
+        "tipo_mov_id",
+        classeCriada.tipo_mov_id
+      );
+      expect(response.body).toHaveProperty(
+        "usuario_id",
+        classeCriada.usuario_id
+      );
     });
 
-    it("deve retornar erro se a conta não for encontrada", async () => {
+    it("deve retornar erro se a classe não for encontrada", async () => {
       const response = await request(app)
-        .get("/conta/999")
+        .get("/classe/999")
         .set("Authorization", token);
 
       expect(response.status).toBe(404);
-      expect(response.body).toHaveProperty("mensagem", "Conta não encontrada!");
+      expect(response.body).toHaveProperty(
+        "mensagem",
+        "Classe não encontrada!"
+      );
     });
   });
 
   // ✅ Teste de atualização
-  describe("PUT /conta/:id", () => {
-    it("deve atualizar uma conta específica", async () => {
+  describe("PUT /classe/:id", () => {
+    it("deve atualizar uma classe específica", async () => {
       const response = await request(app)
-        .put(`/conta/${contaCriada.id}`)
+        .put(`/classe/${classeCriada.id}`)
         .set("Authorization", token)
         .send({
-          nome_conta: "Nome Atualizado",
+          nome_classe: "Nome Atualizado",
+          tipo_mov_id: tipoMovCriado.id,
           usuario_id: usuarioCriado.id,
         });
 
@@ -143,59 +170,60 @@ describe("Testes de Integração - ContaController", () => {
       );
     });
 
-    it("deve retornar erro ao tentar atualizar uma conta inexistente", async () => {
+    it("deve retornar erro ao tentar atualizar uma classe inexistente", async () => {
       const response = await request(app)
-        .put("/conta/999")
+        .put("/classe/999")
         .set("Authorization", token)
         .send({
-          nome_conta: "Novo Nome",
+          nome_classe: "Novo Nome",
+          tipo_mov_id: tipoMovCriado.id,
           usuario_id: usuarioCriado.id,
         });
 
       expect(response.status).toBe(404);
-      expect(response.body).toHaveProperty("mensagem", "Conta não encontrada!");
+      expect(response.body).toHaveProperty(
+        "mensagem",
+        "Classe não encontrada!"
+      );
     });
   });
 
   // ✅ Teste de exclusão
-  describe("DELETE /conta/:id", () => {
-    it("deve excluir uma conta específica", async () => {
+  describe("DELETE /classe/:id", () => {
+    it("deve excluir uma classe específica", async () => {
       const response = await request(app)
-        .delete(`/conta/${contaCriada.id}`)
+        .delete(`/classe/${classeCriada.id}`)
         .set("Authorization", token);
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty(
         "mensagem",
-        "Conta excluída com sucesso!"
+        "Classe excluída com sucesso!"
       );
 
       // Verifica se foi realmente excluído
-      const verificaConta = await request(app)
-        .get(`/conta/${contaCriada.id}`)
+      const verificaClasse = await request(app)
+        .get(`/classe/${classeCriada.id}`)
         .set("Authorization", token);
-      expect(verificaConta.status).toBe(404);
+      expect(verificaClasse.status).toBe(404);
     });
 
-    it("deve retornar erro ao tentar excluir uma conta inexistente", async () => {
+    it("deve retornar erro ao tentar excluir uma classe inexistente", async () => {
       const response = await request(app)
-        .delete("/conta/999")
+        .delete("/classe/999")
         .set("Authorization", token);
 
       expect(response.status).toBe(404);
-      expect(response.body).toHaveProperty("mensagem", "Conta não encontrada!");
+      expect(response.body).toHaveProperty(
+        "mensagem",
+        "Classe não encontrada!"
+      );
     });
 
-    it("deve impedir exclusão de conta vinculada a um movimento", async () => {
-      tipoMovCriado = await TipoMov.create({
-        nome_tipo_mov: "Tipo Mov teste",
+    it("deve impedir exclusão de classe vinculada a um movimento", async () => {
+      contaCriada = await Conta.create({
+        nome_conta: "Conta Teste",
         usuario_id: usuarioCriado.id,
-      });
-
-      classeCriada = await Classe.create({
-        nome_classe: "Classe Teste",
-        usuario_id: usuarioCriado.id,
-        tipo_mov_id: tipoMovCriado.id,
       });
 
       await Movimento.create({
@@ -206,26 +234,18 @@ describe("Testes de Integração - ContaController", () => {
         usuario_id: usuarioCriado.id,
         descricao: "Movimento Teste",
         valor: 100.0,
-        conta_id: contaCriada.id, // Associa o movimento à conta criada
-      });
-
-      console.error("Este log sempre aparecerá!");
-
-      console.log("IDs usados para criar Movimento:", {
-        classe_id: classeCriada.id,
-        usuario_id: usuarioCriado.id,
         conta_id: contaCriada.id,
       });
 
-      // Tenta excluir a conta vinculada ao movimento
+      // Tenta excluir a classe vinculada ao movimento
       const response = await request(app)
-        .delete(`/conta/${contaCriada.id}`)
+        .delete(`/classe/${classeCriada.id}`)
         .set("Authorization", token);
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty(
         "erro",
-        "Esta conta está vinculada a um movimento e não pode ser excluída."
+        "Esta classe está vinculada a um movimento e não pode ser excluída."
       );
     });
   });
