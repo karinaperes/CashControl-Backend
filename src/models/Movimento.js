@@ -1,7 +1,7 @@
-const { DataTypes } = require('sequelize'); // Importando o componente DataTypes do Sequelize
-const { connection } = require('../database/connection');
+const { DataTypes } = require("sequelize"); // Importando o componente DataTypes do Sequelize
+const { connection } = require("../database/connection");
 
-const Movimento = connection.define('movimentos', {
+const Movimento = connection.define("movimentos", {
   data: {
     type: DataTypes.DATEONLY,
     allowNull: false,
@@ -20,38 +20,38 @@ const Movimento = connection.define('movimentos', {
     type: DataTypes.STRING,
   },
   data_pagamento: {
-    allowNull: false,
     type: DataTypes.DATEONLY,
+    allowNull: true,
   },
   classe_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'classes',
-      key: 'id',
+      model: "classes",
+      key: "id",
     },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE',
+    onUpdate: "CASCADE",
+    onDelete: "CASCADE",
   },
   conta_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'contas',
-      key: 'id',
+      model: "contas",
+      key: "id",
     },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE',
+    onUpdate: "CASCADE",
+    onDelete: "CASCADE",
   },
   usuario_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'usuarios',
-      key: 'id',
+      model: "usuarios",
+      key: "id",
     },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE',
+    onUpdate: "CASCADE",
+    onDelete: "CASCADE",
   },
 });
 

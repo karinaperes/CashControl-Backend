@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('movimentos', {
+    await queryInterface.createTable("movimentos", {
       id: {
         primaryKey: true,
         autoIncrement: true,
@@ -29,33 +29,34 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'classes',
-          key: 'id',
+          model: "classes",
+          key: "id",
         },
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
       data_pagamento: {
         type: Sequelize.DATEONLY,
+        allowNull: true,
       },
       conta_id: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'contas',
-          key: 'id',
+          model: "contas",
+          key: "id",
         },
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
       usuario_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'usuarios',
-          key: 'id',
+          model: "usuarios",
+          key: "id",
         },
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
       createdAt: {
         allowNull: false,
@@ -69,6 +70,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('movimentos');
+    await queryInterface.dropTable("movimentos");
   },
 };
