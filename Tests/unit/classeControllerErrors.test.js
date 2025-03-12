@@ -185,11 +185,6 @@ describe("Erros no ClasseController", () => {
   });
 
   it("deve impedir exclusão de classe vinculada a um movimento", async () => {
-    // tipoMovCriado = await TipoMov.create({
-    //   nome_tipo_mov: "Tipo Mov teste",
-    //   usuario_id: usuarioCriado.id,
-    // });
-
     classeCriada = await Classe.create({
       nome_classe: "Classe Teste",
       usuario_id: usuarioCriado.id,
