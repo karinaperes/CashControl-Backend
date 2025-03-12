@@ -1,39 +1,43 @@
-const Movimento = require('../models/Movimento');
-const { body, validationResult } = require('express-validator');
+const Movimento = require("../models/Movimento");
+const { body, validationResult } = require("express-validator");
 
 class MovimentoController {
   async cadastrar(req, res) {
     try {
-      await body('data')
+      await body("data")
         .isDate()
-        .withMessage('Insira uma data de competência válida')
+        .withMessage("Insira uma data de competência válida")
         .run(req);
-      await body('vencimento')
+      await body("vencimento")
         .isDate()
-        .withMessage('Insira uma data de vencimento válida')
+        .withMessage("Insira uma data de vencimento válida")
         .run(req);
-      await body('classe_id')
+      await body("classe_id")
         .isInt()
-        .withMessage('Selecione uma classe')
+        .withMessage("Selecione uma classe")
         .run(req);
-      await body('valor')
+      await body("valor")
         .isFloat()
-        .withMessage('O valor deve ser inserido')
+        .withMessage("O valor deve ser inserido")
         .custom((value) => {
-          if (!/^\d+(\.\d{2})$/.test(value)) {
-            throw new Error('O valor deve ter exatamente duas casas decimais');
+          if (!/^\d+(\.\d{1,2})$/.test(value)) {
+            throw new Error("O valor deve ter exatamente duas casas decimais");
           }
           return true;
         })
         .run(req);
 
-      await body('usuario_id')
+      await body("usuario_id")
         .isInt()
-        .withMessage('Informe o usuário')
+        .withMessage("Usuário não identificado")
         .run(req);
 
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
+        console.log(
+          "Erros de validação:",
+          JSON.stringify(errors.array(), null, 2)
+        );
         return res.status(400).json({ errors: errors.array() });
       }
 
@@ -42,18 +46,18 @@ class MovimentoController {
       res.status(201).json(movimento);
     } catch (error) {
       console.log(error.message);
-      res.status(500).json({ erro: 'Não foi possível efetuar o cadastro.' });
+      res.status(500).json({ erro: "Não foi possível efetuar o cadastro." });
     }
   }
 
-  async listar(res) {
+  async listar(req, res) {
     try {
       const movimentos = await Movimento.findAll();
       res.status(200).json(movimentos);
     } catch (error) {
-      res
-        .status(500)
-        .json({ erro: 'Não foi possível listar os movimentos financeiros.' });
+      res.status(500).json({
+        erro: "Não foi possível listar os movimentos financeiros.",
+      });
     }
   }
 
@@ -65,7 +69,7 @@ class MovimentoController {
       res.status(200).json(movimento);
     } catch (error) {
       console.log(error.message);
-      res.status(500).json({ erro: 'Não foi possível listar o movimento.' });
+      res.status(500).json({ erro: "Não foi possível listar o movimento." });
     }
   }
 
@@ -76,9 +80,9 @@ class MovimentoController {
 
       await movimento.update(req.body);
       await movimento.save();
-      res.status(200).json({ mensagem: 'Alteração efetuada com sucesso!' });
+      res.status(200).json({ mensagem: "Alteração efetuada com sucesso!" });
     } catch (error) {
-      res.status(500).json({ erro: 'Não foi possível atualizar o movimento.' });
+      res.status(500).json({ erro: "Não foi possível atualizar o movimento." });
     }
   }
 
@@ -88,9 +92,9 @@ class MovimentoController {
       const movimento = await Movimento.findByPk(id);
 
       await movimento.destroy();
-      res.status(200).json({ mensagem: 'Movimento excluído com sucesso!' });
+      res.status(200).json({ mensagem: "Movimento excluído com sucesso!" });
     } catch (error) {
-      res.status(500).json({ erro: 'Não foi possível excluir o movimento.' });
+      res.status(500).json({ erro: "Não foi possível excluir o movimento." });
     }
   }
 }
