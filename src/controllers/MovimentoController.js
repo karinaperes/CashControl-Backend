@@ -41,6 +41,22 @@ class MovimentoController {
         return res.status(400).json({ errors: errors.array() });
       }
 
+      const { data, vencimento, classe_id, valor } = req.body;
+
+      const movimentoExistente = await Movimento.findOne({
+        where: {
+          data: data,
+          vencimento: vencimento,
+          classe_id: classe_id,
+          valor: valor,
+        },
+      });
+
+      if (movimentoExistente) {
+        return res.status(409).json({
+           mensagem: "Movimento já cadastrado!" });
+      }
+
       const movimento = await Movimento.create(req.body);
 
       res.status(201).json(movimento);
@@ -66,8 +82,8 @@ class MovimentoController {
       const { id } = req.params;
       const movimento = await Movimento.findByPk(id);
 
-      if(!movimento) {
-        return res.status(404).json({ mensagem: "Movimento não encontrado!"})
+      if (!movimento) {
+        return res.status(404).json({ mensagem: "Movimento não encontrado!" });
       }
 
       res.status(200).json(movimento);
@@ -82,8 +98,8 @@ class MovimentoController {
       const { id } = req.params;
       const movimento = await Movimento.findByPk(id);
 
-      if(!movimento) {
-        return res.status(404).json({ mensagem: "Movimento não encontrado!"})
+      if (!movimento) {
+        return res.status(404).json({ mensagem: "Movimento não encontrado!" });
       }
 
       await movimento.update(req.body);
@@ -99,8 +115,8 @@ class MovimentoController {
       const { id } = req.params;
       const movimento = await Movimento.findByPk(id);
 
-      if(!movimento) {
-        return res.status(404).json({ mensagem: "Movimento não encontrado!"})
+      if (!movimento) {
+        return res.status(404).json({ mensagem: "Movimento não encontrado!" });
       }
 
       await movimento.destroy();
