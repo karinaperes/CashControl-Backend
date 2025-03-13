@@ -1,29 +1,29 @@
-const Classe = require('../models/Classe');
-const Movimento = require('../models/Movimento');
-const { body, validationResult } = require('express-validator');
-const { Op } = require('sequelize');
+const Classe = require("../models/Classe");
+const Movimento = require("../models/Movimento");
+const { body, validationResult } = require("express-validator");
+const { Op } = require("sequelize");
 
 class ClasseController {
   async cadastrar(req, res) {
     try {
-      await body('nome_classe')
+      await body("nome_classe")
         .notEmpty()
-        .withMessage('O nome é obrigatório')
+        .withMessage("O nome é obrigatório")
         .custom((value) => {
           if (value.trim().length === 0) {
-            throw new Error('O nome não pode conter apenas espaços em branco');
+            throw new Error("O nome não pode conter apenas espaços em branco");
           }
           return true;
         })
         .run(req);
-      await body('tipo_mov_id')
+      await body("tipo_mov_id")
         .isInt()
-        .withMessage('Informe o tipo de movimento')
+        .withMessage("Informe o tipo de movimento")
         .run(req);
 
-      await body('usuario_id')
+      await body("usuario_id")
         .isInt()
-        .withMessage('Informe o usuário')
+        .withMessage("Informe o usuário")
         .run(req);
 
       const errors = validationResult(req);
@@ -40,7 +40,7 @@ class ClasseController {
       });
 
       if (classeExistente) {
-        return res.status(409).json({ mensagem: 'Classe já cadastrada!' });
+        return res.status(409).json({ mensagem: "Classe já cadastrada!" });
       }
 
       const classe = await Classe.create(req.body);
@@ -48,9 +48,7 @@ class ClasseController {
       res.status(201).json(classe);
     } catch (error) {
       console.log(error.message);
-      res
-        .status(500)
-        .json({ erro: 'Não foi possível efetuar o cadastro da classe.' });
+      res.status(500).json({ erro: "Não foi possível cadastrar a classe." });
     }
   }
 
@@ -59,7 +57,7 @@ class ClasseController {
       const classes = await Classe.findAll();
       res.status(200).json(classes);
     } catch (error) {
-      res.status(500).json({ erro: 'Não foi possível listar as classes.' });
+      res.status(500).json({ erro: "Não foi possível listar as classes." });
     }
   }
 
@@ -68,22 +66,26 @@ class ClasseController {
       const { id } = req.params;
       const classe = await Classe.findByPk(id);
 
+      if (!classe) {
+        return res.status(404).json({ mensagem: "Classe não encontrada!" });
+      }
+
       res.status(200).json(classe);
     } catch (error) {
       console.log(error.message);
-      res.status(500).json({ erro: 'Não foi possível listar a classe' });
+      res.status(500).json({ erro: "Não foi possível listar a classe." });
     }
   }
 
   async atualizar(req, res) {
     try {
-      await body('nome_classe')
+      await body("nome_classe")
         .notEmpty()
-        .withMessage('O nome é obrigatório')
+        .withMessage("O nome é obrigatório")
         .run(req);
-      await body('tipo_mov_id')
+      await body("tipo_mov_id")
         .isInt()
-        .withMessage('Informe o tipo de movimento')
+        .withMessage("Informe o tipo de movimento")
         .run(req);
 
       const errors = validationResult(req);
@@ -94,6 +96,10 @@ class ClasseController {
       const { id } = req.params;
       const classe = await Classe.findByPk(id);
 
+      if (!classe) {
+        return res.status(404).json({ mensagem: "Classe não encontrada!" });
+      }
+
       const classeExistente = await Classe.findOne({
         where: {
           nome_classe: req.body.nome_classe,
@@ -102,20 +108,25 @@ class ClasseController {
       });
 
       if (classeExistente) {
-        return res.status(409).json({ mensagem: 'Classe já cadastrada!' });
+        return res.status(409).json({ mensagem: "Classe já cadastrada!" });
       }
 
       await classe.update(req.body);
       await classe.save();
-      res.status(200).json({ mensagem: 'Alteração efetuada com sucesso!' });
+      res.status(200).json({ mensagem: "Alteração efetuada com sucesso!" });
     } catch (error) {
-      res.status(500).json({ erro: 'Não foi possível atualizar a classe.' });
+      res.status(500).json({ erro: "Não foi possível atualizar a classe." });
     }
   }
 
   async excluir(req, res) {
     try {
       const { id } = req.params;
+      const classe = await Classe.findByPk(id);
+
+      if (!classe) {
+        return res.status(404).json({ mensagem: "Classe não encontrada!" });
+      }
 
       const movimentoVinculado = await Movimento.findOne({
         where: {
@@ -125,15 +136,14 @@ class ClasseController {
 
       if (movimentoVinculado) {
         return res.status(400).json({
-          erro: 'Esta classe está vinculada a um movimento e não pode ser excluída.',
+          erro: "Esta classe está vinculada a um movimento e não pode ser excluída.",
         });
       }
 
-      const classe = await Classe.findByPk(id);
       await classe.destroy();
-      res.status(200).json({ mensagem: 'Classe excluída com sucesso!' });
+      res.status(200).json({ mensagem: "Classe excluída com sucesso!" });
     } catch (error) {
-      res.status(500).json({ erro: 'Não foi possível excluir a classe.' });
+      res.status(500).json({ erro: "Não foi possível excluir a classe." });
     }
   }
 }
