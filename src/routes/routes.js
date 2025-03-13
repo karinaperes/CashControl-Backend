@@ -6,6 +6,7 @@ const classeRoutes = require('./classe.routes');
 const contaRoutes = require('./conta.routes');
 const movimentoRoutes = require('./movimento.routes');
 const tipoMovRoutes = require('./tipo_mov.routes');
+const relatorioRoutes = require('./relatorio.routes');
 
 const routes = Router();
 
@@ -15,5 +16,6 @@ routes.use('/classe', authMiddleware, classeRoutes);
 routes.use('/conta', authMiddleware, contaRoutes);
 routes.use('/movimento', authMiddleware, movimentoRoutes);
 routes.use('/tipomov', authMiddleware, tipoMovRoutes);
+routes.use('/relatorio', authMiddleware, relatorioRoutes);
 
 module.exports = routes;
