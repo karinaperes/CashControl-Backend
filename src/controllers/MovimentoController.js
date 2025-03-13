@@ -66,6 +66,10 @@ class MovimentoController {
       const { id } = req.params;
       const movimento = await Movimento.findByPk(id);
 
+      if(!movimento) {
+        return res.status(404).json({ mensagem: "Movimento não encontrado!"})
+      }
+
       res.status(200).json(movimento);
     } catch (error) {
       console.log(error.message);
@@ -77,6 +81,10 @@ class MovimentoController {
     try {
       const { id } = req.params;
       const movimento = await Movimento.findByPk(id);
+
+      if(!movimento) {
+        return res.status(404).json({ mensagem: "Movimento não encontrado!"})
+      }
 
       await movimento.update(req.body);
       await movimento.save();
@@ -90,6 +98,10 @@ class MovimentoController {
     try {
       const { id } = req.params;
       const movimento = await Movimento.findByPk(id);
+
+      if(!movimento) {
+        return res.status(404).json({ mensagem: "Movimento não encontrado!"})
+      }
 
       await movimento.destroy();
       res.status(200).json({ mensagem: "Movimento excluído com sucesso!" });
