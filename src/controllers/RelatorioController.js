@@ -41,11 +41,11 @@ const RelatorioController = async (req, res) => {
     if (descricao) {
       filtros.descricao = { [Op.iLike]: `%${descricao}%` }; // Busca parcial (case insensitive)
     }
-
+    
     const movimentos = await Movimento.findAll({
       where: filtros,
       attributes: ["classe_id", [fn("SUM", col("valor")), "total"]],
-      group: ["classe_id"], // Agrupando por classe_id
+      group: ["classe_id"],
     });
 
     return res.status(200).json(movimentos);
