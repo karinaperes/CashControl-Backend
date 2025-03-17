@@ -5,7 +5,6 @@ const jwt = require("jsonwebtoken");
 const serverInstance = new Server();
 const Usuario = require("../../src/models/Usuario");
 const TipoMov = require("../../src/models/TipoMov");
-const Movimento = require("../../src/models/Movimento");
 const Conta = require("../../src/models/Conta");
 const Classe = require("../../src/models/Classe");
 
@@ -141,9 +140,7 @@ describe("Testes de Integração - MovimentoController", () => {
         });
 
       expect(response.status).toBe(400);
-      expect(response.body.errors[0].msg).toBe(
-        "Selecione uma classe"
-      );
+      expect(response.body.errors[0].msg).toBe("Selecione uma classe");
     });
 
     it("deve retornar erro ao cadastrar sem um valor", async () => {
@@ -162,9 +159,7 @@ describe("Testes de Integração - MovimentoController", () => {
         });
 
       expect(response.status).toBe(400);
-      expect(response.body.errors[0].msg).toBe(
-        "O valor deve ser inserido"
-      );
+      expect(response.body.errors[0].msg).toBe("O valor deve ser inserido");
     });
   });
 
