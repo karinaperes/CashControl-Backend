@@ -1,6 +1,5 @@
 const { DataTypes } = require("sequelize");
 const { connection } = require("../database/connection");
-const TipoMov = require("./TipoMov"); // Importação do modelo TipoMov
 
 const Classe = connection.define("classes", {
   nome_classe: {
@@ -29,8 +28,5 @@ const Classe = connection.define("classes", {
     onDelete: "CASCADE",
   },
 });
-
-// 🔗 Cria a associação entre Classe e TipoMov
-Classe.belongsTo(TipoMov, { foreignKey: "tipo_mov_id", as: "tipoMov" });
 
 module.exports = Classe;
