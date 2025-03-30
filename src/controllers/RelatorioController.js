@@ -49,20 +49,37 @@ const graficoReceitaDespesa = async (req, res) => {
   try {
     const { data_inicial, data_final } = req.query;
 
-    let filtros = {};
+    // 1. Obter datas do mês atual (padrão)
+    const now = new Date();
+    const primeiroDiaMes = new Date(now.getFullYear(), now.getMonth(), 1);
+    const ultimoDiaMes = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
-    if (data_inicial && data_final) {
-      filtros.data = { [Op.between]: [data_inicial, data_final] };
-    }
+    // 2. Função para formatar e validar datas
+    const parseDate = (dateString, fallback) => {
+      if (!dateString) return fallback;
+      const date = new Date(dateString);
+      return isNaN(date.getTime()) ? fallback : date;
+    };
+
+    // 3. Definir datas finais (usar padrão se não fornecido)
+    const dataInicial = parseDate(data_inicial, primeiroDiaMes);
+    const dataFinal = parseDate(data_final, ultimoDiaMes);
+
+    // 4. Criar filtro para ambas consultas
+    const filtroDatas = {
+      data: { 
+        [Op.between]: [dataInicial, dataFinal] 
+      }
+    };
 
     // CONSULTA 1: Totais por Tipo (Receita/Despesa)
     const totaisPorTipo = await Movimento.findAll({
-      where: filtros,
+      where: filtroDatas,
       include: [
         {
           model: Classe,
           as: "classe",
-          attributes: [], // Remova nome_classe se não for usado
+          attributes: [],
           include: [
             {
               model: TipoMov,
@@ -82,11 +99,7 @@ const graficoReceitaDespesa = async (req, res) => {
 
     // CONSULTA 2: Totais por Classe
     const totaisPorClasse = await Movimento.findAll({
-      where: {
-        data: {
-          [Op.between]: [new Date(data_inicial), new Date(data_final)],
-        },
-      },
+      where: filtroDatas, // Usando o mesmo filtro
       include: [
         {
           association: "classe",
@@ -108,20 +121,24 @@ const graficoReceitaDespesa = async (req, res) => {
       raw: true,
     });
 
-    // Processamento dos resultados (mantido igual)
+    // Processamento dos resultados
     const receita = parseFloat(
-      totaisPorTipo.find((t) => t.tipo && t.tipo.toLowerCase() === "receita")
-        ?.total || 0
+      totaisPorTipo.find((t) => t.tipo && t.tipo.toLowerCase() === "receita")?.total || 0
     );
 
     const despesa = Math.abs(
       parseFloat(
-        totaisPorTipo.find((t) => t.tipo && t.tipo.toLowerCase() === "despesa")
-          ?.total || 0
+        totaisPorTipo.find((t) => t.tipo && t.tipo.toLowerCase() === "despesa")?.total || 0
       )
     );
 
+    // Retornar resultado com período usado
     const resultado = {
+      periodo: {
+        inicio: dataInicial.toISOString().split('T')[0],
+        fim: dataFinal.toISOString().split('T')[0],
+        padrao: !data_inicial && !data_final // Indica se usou datas padrão
+      },
       grafico: {
         receita,
         despesa,
@@ -132,19 +149,15 @@ const graficoReceitaDespesa = async (req, res) => {
         tipo: item.tipo,
         total: Math.abs(parseFloat(item.total) || 0),
         percentual: (
-          (Math.abs(parseFloat(item.total)) / (receita + despesa)) *
-          100
+          (Math.abs(parseFloat(item.total)) / (receita + despesa)) * 100
         ).toFixed(2),
       })),
     };
 
     return res.status(200).json(resultado);
+    
   } catch (error) {
-    console.error("Erro detalhado:", {
-      message: error.message,
-      stack: error.stack,
-    });
-
+    console.error("Erro detalhado:", error);
     return res.status(500).json({
       message: "Erro ao gerar relatório",
       error: process.env.NODE_ENV === "development" ? error.message : null,
