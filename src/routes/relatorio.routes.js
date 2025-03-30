@@ -1,8 +1,9 @@
-const { Router } = require('express');
-const { RelatorioController } = require('../controllers/RelatorioController');
+const { Router } = require("express");
+const { listarMovimentos, graficoReceitaDespesa } = require("../controllers/RelatorioController");
 
-const relatorioRoutes = new Router();
+const relatorioRoutes = Router();
 
-relatorioRoutes.get('/', RelatorioController);
+relatorioRoutes.get("/movimentos", listarMovimentos);
+relatorioRoutes.get("/grafico", graficoReceitaDespesa);
 
 module.exports = relatorioRoutes;
