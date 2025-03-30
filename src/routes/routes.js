@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const authMiddleware = require("../middlewares/authMiddleware");
+// const authMiddleware = require("../middlewares/authMiddleware");
 const loginRoutes = require("./login.routes");
 const usuarioRoutes = require("./usuario.routes");
 const classeRoutes = require("./classe.routes");
@@ -23,5 +23,6 @@ routes.use("/conta", contaRoutes);
 routes.use("/tipomov", tipoMovRoutes);
 routes.use("/relatorio", relatorioRoutes);
 routes.use("/movimento", movimentoRoutes);
+routes.use("/relatorio", relatorioRoutes)
 
 module.exports = routes;
