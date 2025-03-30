@@ -3,59 +3,57 @@ const Movimento = require("../models/Movimento");
 const Classe = require("../models/Classe");
 const TipoMov = require("../models/TipoMov");
 
-const RelatorioController = async (req, res) => {
+const listarMovimentos = async (req, res) => {
   try {
-    const {
-      classe_id,
-      data_inicial,
-      data_final,
-      vencimento_inicial,
-      vencimento_final,
-      pagamento_inicial,
-      pagamento_final,
-      descricao,
-      agrupar_por,
-    } = req.query;
+    const { data_inicial, data_final, descricao } = req.query;
 
     let filtros = {};
 
-    if (classe_id) {
-      filtros.classe_id = classe_id;
-    }
-
     if (data_inicial && data_final) {
-      filtros.data = {
-        [Op.between]: [data_inicial, data_final],
-      };
-    }
-
-    if (vencimento_inicial && vencimento_final) {
-      filtros.vencimento = {
-        [Op.between]: [vencimento_inicial, vencimento_final],
-      };
-    }
-
-    if (pagamento_inicial && pagamento_final) {
-      filtros.pagamento = {
-        [Op.between]: [pagamento_inicial, pagamento_final],
-      };
+      filtros.data = { [Op.between]: [data_inicial, data_final] };
     }
 
     if (descricao) {
-      filtros.descricao = { [Op.iLike]: `%${descricao}%` }; // Busca parcial (case insensitive)
-    }
-
-    let groupBy = [];
-    if (agrupar_por) {
-      const opcoesPermitidas = ["classe_id", "data", "vencimento", "pagamento"];
-      if (opcoesPermitidas.includes(agrupar_por)) {
-        groupBy.push(agrupar_por);
-      }
-    } else {
-      groupBy.push("classe_id"); // Agrupamento padrão por classe
+      filtros.descricao = { [Op.iLike]: `%${descricao}%` };
     }
 
     const movimentos = await Movimento.findAll({
+      where: filtros,
+      include: [
+        {
+          model: Classe,
+          as: "classe",
+          attributes: ["nome_classe"],
+          include: [
+            {
+              model: TipoMov,
+              as: "tipoMov",
+              attributes: ["nome_tipo_mov"], // Pegamos o tipo para diferenciar receitas de despesas
+            },
+          ],
+        },
+      ],
+      order: [["data", "DESC"]],
+    });
+
+    return res.status(200).json(movimentos);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Erro ao listar movimentos", error: error.message });
+  }
+};
+
+const graficoReceitaDespesa = async (req, res) => {
+  try {
+    const { data_inicial, data_final } = req.query;
+
+    let filtros = {};
+
+    if (data_inicial && data_final) {
+      filtros.data = { [Op.between]: [data_inicial, data_final] };
+    }
+
+    const totais = await Movimento.findAll({
       where: filtros,
       include: [
         {
@@ -65,42 +63,31 @@ const RelatorioController = async (req, res) => {
             {
               model: TipoMov,
               as: "tipoMov",
+              attributes: ["tipo"],
             },
           ],
         },
       ],
       attributes: [
-        agrupar_por || "classe_id", "classe.nome_classe",
-        [fn("SUM", col("valor")), "total"], // Soma dos valores já ajustados no banco
+        [fn("SUM", col("valor")), "total"],
+        [col("classe.tipoMov.nome_tipo_mov"), "tipo_mov"],
       ],
-      group: [
-        agrupar_por || "classe_id", "classe.nome_classe" // Agrupar apenas por classe_id
-      ],
+      group: ["classe.tipoMov.tipo"],
     });
 
-    // Calcular o total geral para calcular os percentuais
-    const totalGeral = movimentos.reduce((acc, movimento) => acc + parseFloat(movimento.dataValues.total), 0);
+    const resultado = totais.map((item) => ({
+      tipo: item.dataValues.tipo_mov,
+      total: parseFloat(item.dataValues.total),
+    }));
 
-    // Adicionar o percentual para cada classe
-    const resultadoComPercentuais = movimentos.map((movimento) => {
-      const percentual = totalGeral ? ((parseFloat(movimento.dataValues.total) / totalGeral) * 100).toFixed(2) : 0;
-      return {
-        nome_classe: movimento.dataValues["classe.nome_classe"],
-        total: movimento.dataValues.total,
-        percentual,
-      };
-    });
-
-    return res.status(200).json(movimentos);
+    return res.status(200).json(resultado);
   } catch (error) {
     console.log(error);
-    return res.status(500).json({
-      message: "Erro ao obter relatório",
-      error: error.message,
-    });
+    return res.status(500).json({ message: "Erro ao gerar gráfico", error: error.message });
   }
 };
 
 module.exports = {
-  RelatorioController,
+  listarMovimentos,
+  graficoReceitaDespesa,
 };
